@@ -7,6 +7,9 @@ import {
   resizeResults,
   MtcnnOptions,
   SsdMobilenetv1Options,
+  isWithFaceExpressions,
+  isWithFaceDetection,
+  isWithFaceLandmarks
 } from 'face-api.js'
 import { useEffect, useState } from 'react'
 import { useGlobalStore } from '../useGlobalStore'
@@ -105,11 +108,17 @@ export const useFaceDetection = (
     try {
       if (animationFrame) cancelAnimationFrame(animationFrame)
       if (!video.current) return
-      const results = await detectAllFaces(
+      const detection = detectAllFaces(
         video.current,
         detectionOptions
-      ).withFaceExpressions()
-      // .withAgeAndGender()
+      )
+      if(options.withFaceExpression){
+        detection.withFaceExpressions()
+      }
+      if(options.withAgeAndGender){
+        detection.withAgeAndGender()
+      }
+      const results = await detection
       console.log('All faces detected')
       if (!canvas.current) return
       console.log('Attempt to draw')
@@ -121,14 +130,16 @@ export const useFaceDetection = (
           width: video.current.videoWidth,
         })
       )
-      draw.drawFaceExpressions(
-        canvas.current,
-        resizeResults(results, {
-          height: video.current.videoHeight,
-          width: video.current.videoWidth,
-        }),
-        0.1
-      )
+      // if(options.withFaceExpression){
+      //   draw.drawFaceExpressions(
+      //     canvas.current,
+      //     resizeResults(results, {
+      //       height: video.current.videoHeight,
+      //       width: video.current.videoWidth,
+      //     }),
+      //     0.1
+      //   )
+      // }
 
       if (isCameraOn) {
         animationFrame = requestAnimationFrame(
