@@ -13,9 +13,9 @@ export const Camera = () => {
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
   //#endregion
 
-  useLayoutEffect(() => {
-    startCamera()
-  }, [])
+  // useLayoutEffect(() => {
+  //   startCamera()
+  // }, [])
 
   //#region - Setup hooks -
   const { runFaceDetection, stopFaceDetection } = useFaceDetection(
@@ -84,7 +84,7 @@ export const Camera = () => {
   // }
 
   return (
-    <div className=" flex flex-col space-y-8 w-full">
+    <div className="hidden flex-col space-y-8 w-full">
       <div>
         {/* <div className="flex flex-row justify-around">
           <button onClick={startCamera}>Start camera</button>
