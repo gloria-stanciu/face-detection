@@ -1,20 +1,22 @@
 import {
   loadFaceExpressionModel,
   nets,
-  detectAllFaces,
   TinyFaceDetectorOptions,
   draw,
   resizeResults,
   MtcnnOptions,
   SsdMobilenetv1Options,
-  isWithFaceExpressions,
-  isWithFaceDetection,
-  isWithFaceLandmarks
+  loadAgeGenderModel,
+  utils,
+  detectSingleFace,
+  matchDimensions,
 } from 'face-api.js'
 import { useEffect, useState } from 'react'
 import { useGlobalStore } from '../useGlobalStore'
 
 let isCameraOn = false
+//@ts-ignore
+let predictedAges = []
 
 export const useFaceDetection = (
   video: React.RefObject<HTMLVideoElement>,
@@ -27,6 +29,7 @@ export const useFaceDetection = (
   // set on mount
   useEffect(() => {
     loadFaceDetectionModel()
+    loadAgeAndGenderModel()
     loadExpressionModel()
     getFaceDetectorOptions()
   }, [])
@@ -55,6 +58,15 @@ export const useFaceDetection = (
     try {
       console.log('Load face expression model.')
       await loadFaceExpressionModel('/weights')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const loadAgeAndGenderModel = async () => {
+    try {
+      console.log('Load age and gender model.')
+      await loadAgeGenderModel('/weights')
     } catch (error) {
       console.log(error)
     }
@@ -96,6 +108,14 @@ export const useFaceDetection = (
     }
   }
 
+  const interpolateAgePredictions = (age: any) => {
+    //@ts-ignore
+    predictedAges = [age].concat(predictedAges).slice(0, 30)
+    const avgPredictedAge =
+      predictedAges.reduce((total, a) => total + a) / predictedAges.length
+    return avgPredictedAge
+  }
+
   let animationFrame: number
 
   const detect = async (
@@ -107,39 +127,50 @@ export const useFaceDetection = (
   ) => {
     try {
       if (animationFrame) cancelAnimationFrame(animationFrame)
+
       if (!video.current) return
-      const detection = detectAllFaces(
-        video.current,
-        detectionOptions
-      )
-      if(options.withFaceExpression){
-        detection.withFaceExpressions()
-      }
-      if(options.withAgeAndGender){
-        detection.withAgeAndGender()
-      }
+
+      const detection = detectSingleFace(video.current, detectionOptions)
+        .withFaceExpressions()
+        .withAgeAndGender()
+
       const results = await detection
+
       console.log('All faces detected')
+
       if (!canvas.current) return
-      console.log('Attempt to draw')
-      clearCanvas()
-      draw.drawDetections(
-        canvas.current,
-        resizeResults(results, {
-          height: video.current.videoHeight,
-          width: video.current.videoWidth,
-        })
-      )
-      // if(options.withFaceExpression){
-      //   draw.drawFaceExpressions(
-      //     canvas.current,
-      //     resizeResults(results, {
-      //       height: video.current.videoHeight,
-      //       width: video.current.videoWidth,
-      //     }),
-      //     0.1
-      //   )
-      // }
+
+      if (results) {
+        const resizedResults = resizeResults(
+          results,
+          matchDimensions(canvas.current, video.current, true)
+        )
+
+        console.log('Attempt to draw')
+        clearCanvas()
+        draw.drawDetections(canvas.current, resizedResults)
+
+        if (options.withFaceExpression) {
+          draw.drawFaceExpressions(canvas.current, resizedResults, 0.1)
+        }
+
+        if (options.withAgeAndGender) {
+          const { age, gender, genderProbability } = resizedResults
+
+          // interpolate gender predictions over last 30 frames
+          // to make the displayed age more stable
+          const interpolatedAge = interpolateAgePredictions(age)
+          new draw.DrawTextField(
+            [
+              `${utils.round(interpolatedAge, 0)} years`,
+              `${gender} (${utils.round(genderProbability)})`,
+            ],
+            resizedResults.detection.box.bottomRight
+          ).draw(canvas.current)
+        }
+      } else {
+        clearCanvas()
+      }
 
       if (isCameraOn) {
         animationFrame = requestAnimationFrame(
