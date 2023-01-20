@@ -145,14 +145,8 @@ export const useFaceDetection = (
           results,
           matchDimensions(canvas.current, video.current, true)
         )
-
         console.log('Attempt to draw')
         clearCanvas()
-        draw.drawDetections(canvas.current, resizedResults)
-
-        if (options.withFaceExpression) {
-          draw.drawFaceExpressions(canvas.current, resizedResults, 0.1)
-        }
 
         if (options.withAgeAndGender) {
           const { age, gender, genderProbability } = resizedResults
@@ -160,13 +154,29 @@ export const useFaceDetection = (
           // interpolate gender predictions over last 30 frames
           // to make the displayed age more stable
           const interpolatedAge = interpolateAgePredictions(age)
-          new draw.DrawTextField(
-            [
-              `${utils.round(interpolatedAge, 0)} years`,
-              `${gender} (${utils.round(genderProbability)})`,
-            ],
-            resizedResults.detection.box.bottomRight
-          ).draw(canvas.current)
+
+          if (!video.current.hidden) {
+            draw.drawDetections(canvas.current, resizedResults)
+
+            if (options.withFaceExpression) {
+              draw.drawFaceExpressions(canvas.current, resizedResults, 0.1)
+            }
+
+            new draw.DrawTextField(
+              [
+                `${utils.round(interpolatedAge, 0)} years`,
+                `${gender} (${utils.round(genderProbability)})`,
+              ],
+              resizedResults.detection.box.bottomRight
+            ).draw(canvas.current)
+          }
+
+          console.log({
+            age: Number(age.toFixed(0)),
+            gender,
+            genderProbability,
+            expressions: resizedResults.expressions,
+          })
         }
       } else {
         clearCanvas()

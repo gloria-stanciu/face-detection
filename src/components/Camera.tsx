@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useFaceDetection } from '../hooks'
 import { RecordedVideo } from './RecordedVideo'
 
@@ -12,6 +12,10 @@ export const Camera = () => {
   const [camera, setCamera] = useState<MediaStream>()
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
   //#endregion
+
+  useLayoutEffect(() => {
+    startCamera()
+  }, [])
 
   //#region - Setup hooks -
   const { runFaceDetection, stopFaceDetection } = useFaceDetection(
@@ -75,14 +79,14 @@ export const Camera = () => {
     stream.getTracks().forEach(track => track.stop())
   }
 
-  const wait = (delayInMS: number) => {
-    return new Promise(resolve => setTimeout(resolve, delayInMS))
-  }
+  // const wait = (delayInMS: number) => {
+  //   return new Promise(resolve => setTimeout(resolve, delayInMS))
+  // }
 
   return (
     <div className=" flex flex-col space-y-8 w-full">
       <div>
-        <div className="flex flex-row justify-around">
+        {/* <div className="flex flex-row justify-around">
           <button onClick={startCamera}>Start camera</button>
           <button
             onClick={() => {
@@ -93,11 +97,12 @@ export const Camera = () => {
           >
             Stop camera
           </button>
-        </div>
+        </div> */}
 
-        <h2>Preview recording</h2>
+        {/* <h2>Preview recording</h2> */}
         <div className="relative ">
           <video
+            hidden
             ref={previewVideo}
             autoPlay={camera ? true : false}
             onLoadedData={() => {
