@@ -13,7 +13,7 @@ import {
 } from 'face-api.js'
 import { useEffect, useState } from 'react'
 import { Prediction } from '../types'
-import { useGlobalStore } from '../useGlobalStore'
+import { useGlobalStore } from './useGlobalStore'
 import { useSupabase } from './index'
 import throttle from 'lodash.throttle'
 

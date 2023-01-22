@@ -1,0 +1,18 @@
+<head>
+  <meta
+    name="bs:input:youtubeUrl"
+    content="type=string,description=Youtube URL"
+  />
+  <meta
+    name="bs:input:buttonName"
+    content="type=string,description=Display name for the button"
+  />
+</head>
+<body>
+  <script>
+    function onChatBotReady() {
+      var youtubeUrl = BotStarWebview('getParameter', 'youtubeUrl')
+      var btnName = BotStarWebview('getParameter', 'buttonName')
+    }
+  </script>
+</body>

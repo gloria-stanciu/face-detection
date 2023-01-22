@@ -1,8 +1,11 @@
 import create from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { DetectionModel, FacesToDetect, Models } from './types'
+import { DetectionModel, FacesToDetect, Models } from '../types'
 
 interface GlobalStore {
+  user: {
+    conversation_id: string
+  }
   options: {
     numberOfFaces: FacesToDetect
     faceDetectionModel: DetectionModel
@@ -12,9 +15,14 @@ interface GlobalStore {
   }
   updateOptions: (optionToUpdate: Partial<GlobalStore['options']>) => void
   resetDetectionOptions: () => void
+  setConversationId: (conversationId: string) => void
 }
 
-const initionDetectionOptions: GlobalStore['options'] = {
+const initializeUser: GlobalStore['user'] = {
+  conversation_id: '',
+}
+
+const initializeDetectionOptions: GlobalStore['options'] = {
   numberOfFaces: 'All',
   faceDetectionModel: 'TINY_FACE_DETECTOR',
   faceDetectionOptions: {
@@ -27,7 +35,8 @@ const initionDetectionOptions: GlobalStore['options'] = {
 
 export const useGlobalStore = create(
   immer<GlobalStore>(set => ({
-    options: initionDetectionOptions,
+    user: initializeUser,
+    options: initializeDetectionOptions,
 
     updateOptions: optionToUpdate =>
       set(state => ({
@@ -37,7 +46,10 @@ export const useGlobalStore = create(
         },
       })),
     resetDetectionOptions: () => {
-      set(state => (state.options = initionDetectionOptions))
+      set(state => (state.options = initializeDetectionOptions))
+    },
+    setConversationId: conversationId => {
+      set(state => (state.user.conversation_id = conversationId))
     },
   }))
 )
