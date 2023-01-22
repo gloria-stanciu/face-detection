@@ -11,26 +11,32 @@ export interface Database {
     Tables: {
       conversation: {
         Row: {
+          age: number | null
+          conversation: Json | null
+          conversation_id: string
           created_at: string | null
-          id: number
-          user_id: number | null
+          gender: string | null
         }
         Insert: {
+          age?: number | null
+          conversation?: Json | null
+          conversation_id: string
           created_at?: string | null
-          id?: number
-          user_id?: number | null
+          gender?: string | null
         }
         Update: {
+          age?: number | null
+          conversation?: Json | null
+          conversation_id?: string
           created_at?: string | null
-          id?: number
-          user_id?: number | null
+          gender?: string | null
         }
       }
       recording: {
         Row: {
           age: number
           angry: number
-          conversation_id: number | null
+          conversation_id: string | null
           disgusted: number
           fearful: number
           gender: string
@@ -45,7 +51,7 @@ export interface Database {
         Insert: {
           age: number
           angry: number
-          conversation_id?: number | null
+          conversation_id?: string | null
           disgusted: number
           fearful: number
           gender: string
@@ -60,7 +66,7 @@ export interface Database {
         Update: {
           age?: number
           angry?: number
-          conversation_id?: number | null
+          conversation_id?: string | null
           disgusted?: number
           fearful?: number
           gender?: string
