@@ -1,0 +1,7 @@
+GENERATE EDGE FUNCTION
+
+command: supabase functions new <hello-world>
+
+DEPLOY EDGE FUNCTION
+
+command: supabase functions deploy <hello-world>
