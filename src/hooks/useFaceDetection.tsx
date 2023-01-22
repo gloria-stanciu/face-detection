@@ -12,16 +12,21 @@ import {
   matchDimensions,
 } from 'face-api.js'
 import { useEffect, useState } from 'react'
+import { Prediction } from '../types'
 import { useGlobalStore } from '../useGlobalStore'
+import { useSupabase } from './index'
+import throttle from 'lodash.throttle'
 
 let isCameraOn = false
 //@ts-ignore
 let predictedAges = []
+let predictions: Prediction[] = []
 
 export const useFaceDetection = (
   video: React.RefObject<HTMLVideoElement>,
   canvas: React.RefObject<HTMLCanvasElement>
 ) => {
+  const { supabase } = useSupabase()
   const { options } = useGlobalStore(state => ({ options: state.options }))
   const [detectionOptions, setDetectionOptions] = useState<
     TinyFaceDetectorOptions | MtcnnOptions | SsdMobilenetv1Options
@@ -116,6 +121,18 @@ export const useFaceDetection = (
     return avgPredictedAge
   }
 
+  const storePredictionsToDB = throttle(async () => {
+    //@ts-ignore
+    await supabase.from('recording').insert(predictions)
+
+    predictions = []
+  }, 1000)
+
+  const storePredictionLocally = (newPrediction: Prediction) => {
+    predictions.push(newPrediction)
+    storePredictionsToDB()
+  }
+
   let animationFrame: number
 
   const detect = async (
@@ -170,7 +187,18 @@ export const useFaceDetection = (
               resizedResults.detection.box.bottomRight
             ).draw(canvas.current)
           }
-
+          storePredictionLocally({
+            age: Number(age.toFixed(0)),
+            gender,
+            gender_probability: resizedResults.genderProbability,
+            angry: resizedResults.expressions.angry,
+            disgusted: resizedResults.expressions.disgusted,
+            fearful: resizedResults.expressions.fearful,
+            happy: resizedResults.expressions.happy,
+            neutral: resizedResults.expressions.neutral,
+            sad: resizedResults.expressions.sad,
+            surprised: resizedResults.expressions.surprised,
+          })
           console.log({
             age: Number(age.toFixed(0)),
             gender,

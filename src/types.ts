@@ -15,3 +15,19 @@ export interface Models {
     minFaceSize: number
   }
 }
+
+export interface Prediction {
+  id?: number
+  conversation_id?: number
+  timestamp?: string
+  age: number
+  gender: string
+  gender_probability: number
+  angry: number
+  disgusted: number
+  fearful: number
+  happy: number
+  neutral: number
+  sad: number
+  surprised: number
+}
