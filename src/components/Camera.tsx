@@ -13,9 +13,9 @@ export const Camera = () => {
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
   //#endregion
 
-  useLayoutEffect(() => {
-    startCamera()
-  }, [])
+  // useLayoutEffect(() => {
+  //   startCamera()
+  // }, [])
 
   //#region - Setup hooks -
   const { runFaceDetection, stopFaceDetection } = useFaceDetection(
