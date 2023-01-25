@@ -4,10 +4,11 @@ import './index.css'
 import { useGlobalStore } from './hooks/useGlobalStore'
 
 window.addEventListener('message', e => {
-  if (e?.data?.data?.user) {
-    useGlobalStore.setState(state => {
-      state.user.conversation_id = e?.data?.data?.user?.id
-    })
+  console.log(e.data)
+  const userId = e?.data?.data?.messages?.[0]?.metadata?.chatter?.id
+  if (userId) {
+    console.log({ userId })
+    useGlobalStore.setState({ conversation_id: userId })
   }
 })
 

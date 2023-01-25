@@ -18,7 +18,7 @@ export interface Models {
 
 export interface Prediction {
   id?: number
-  conversation_id?: number
+  conversation_id?: string
   timestamp?: string
   age: number
   gender: string

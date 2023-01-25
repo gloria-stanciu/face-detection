@@ -1,11 +1,10 @@
 import create from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { persist } from 'zustand/middleware'
 import { DetectionModel, FacesToDetect, Models } from '../types'
 
 interface GlobalStore {
-  user: {
-    conversation_id: string
-  }
+  conversation_id: string | null
   options: {
     numberOfFaces: FacesToDetect
     faceDetectionModel: DetectionModel
@@ -15,11 +14,7 @@ interface GlobalStore {
   }
   updateOptions: (optionToUpdate: Partial<GlobalStore['options']>) => void
   resetDetectionOptions: () => void
-  setConversationId: (conversationId: string) => void
-}
-
-const initializeUser: GlobalStore['user'] = {
-  conversation_id: '',
+  setConversationId: (conversationId: string | null) => void
 }
 
 const initializeDetectionOptions: GlobalStore['options'] = {
@@ -35,7 +30,7 @@ const initializeDetectionOptions: GlobalStore['options'] = {
 
 export const useGlobalStore = create(
   immer<GlobalStore>(set => ({
-    user: initializeUser,
+    conversation_id: null,
     options: initializeDetectionOptions,
 
     updateOptions: optionToUpdate =>
@@ -49,7 +44,11 @@ export const useGlobalStore = create(
       set(state => (state.options = initializeDetectionOptions))
     },
     setConversationId: conversationId => {
-      set(state => (state.user.conversation_id = conversationId))
+      set(state => (state.conversation_id = conversationId))
     },
   }))
 )
+
+const unsub4 = useGlobalStore.subscribe(state => {
+  console.log(state.conversation_id)
+})

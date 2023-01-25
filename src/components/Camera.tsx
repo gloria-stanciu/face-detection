@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useFaceDetection } from '../hooks'
+import { useGlobalStore } from '../hooks/useGlobalStore'
 import { RecordedVideo } from './RecordedVideo'
 
 export const Camera = () => {
@@ -12,10 +13,12 @@ export const Camera = () => {
   const [camera, setCamera] = useState<MediaStream>()
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
   //#endregion
+  const conversation_id = useGlobalStore(state => state.conversation_id)
+  useLayoutEffect(() => {
+    startCamera()
+  }, [])
 
-  // useLayoutEffect(() => {
-  //   startCamera()
-  // }, [])
+  useEffect(() => console.log(conversation_id))
 
   //#region - Setup hooks -
   const { runFaceDetection, stopFaceDetection } = useFaceDetection(

@@ -27,7 +27,7 @@ export const useFaceDetection = (
   canvas: React.RefObject<HTMLCanvasElement>
 ) => {
   const { supabase } = useSupabase()
-  const { options } = useGlobalStore(state => ({ options: state.options }))
+  const options = useGlobalStore(state => state.options)
   const [detectionOptions, setDetectionOptions] = useState<
     TinyFaceDetectorOptions | MtcnnOptions | SsdMobilenetv1Options
   >()
@@ -122,8 +122,9 @@ export const useFaceDetection = (
   }
 
   const storePredictionsToDB = throttle(async () => {
-    //@ts-ignore
-    await supabase.from('recording').insert(predictions)
+    if (predictions.length !== 0) {
+      await supabase.from('recording').insert(predictions)
+    }
 
     predictions = []
   }, 1000)
@@ -187,24 +188,35 @@ export const useFaceDetection = (
               resizedResults.detection.box.bottomRight
             ).draw(canvas.current)
           }
-          storePredictionLocally({
-            age: Number(age.toFixed(0)),
-            gender,
-            gender_probability: resizedResults.genderProbability,
-            angry: resizedResults.expressions.angry,
-            disgusted: resizedResults.expressions.disgusted,
-            fearful: resizedResults.expressions.fearful,
-            happy: resizedResults.expressions.happy,
-            neutral: resizedResults.expressions.neutral,
-            sad: resizedResults.expressions.sad,
-            surprised: resizedResults.expressions.surprised,
-          })
-          console.log({
-            age: Number(age.toFixed(0)),
-            gender,
-            genderProbability,
-            expressions: resizedResults.expressions,
-          })
+          const conversation_id = useGlobalStore.getState().conversation_id
+          if (conversation_id) {
+            storePredictionLocally({
+              conversation_id,
+              age: Number(age.toFixed(0)),
+              gender,
+              gender_probability: resizedResults.genderProbability,
+              angry: resizedResults.expressions.angry,
+              disgusted: resizedResults.expressions.disgusted,
+              fearful: resizedResults.expressions.fearful,
+              happy: resizedResults.expressions.happy,
+              neutral: resizedResults.expressions.neutral,
+              sad: resizedResults.expressions.sad,
+              surprised: resizedResults.expressions.surprised,
+            })
+            console.log({
+              conversation_id,
+              age: Number(age.toFixed(0)),
+              gender,
+              gender_probability: resizedResults.genderProbability,
+              angry: resizedResults.expressions.angry,
+              disgusted: resizedResults.expressions.disgusted,
+              fearful: resizedResults.expressions.fearful,
+              happy: resizedResults.expressions.happy,
+              neutral: resizedResults.expressions.neutral,
+              sad: resizedResults.expressions.sad,
+              surprised: resizedResults.expressions.surprised,
+            })
+          }
         }
       } else {
         clearCanvas()
