@@ -7,7 +7,7 @@ const corsHeaders = {
   'Content-Type': 'application/json'
 }
 
-console.log(`Function "get-prediction"!`)
+console.log(`Function "get-age-prediction"!`)
 
 serve(async (req: Request) => {
   // This is needed if you're planning to invoke your function from a browser.
@@ -35,14 +35,17 @@ serve(async (req: Request) => {
       data: { user },
     } = await supabaseClient.auth.getUser()
 
-    const { prediction_category, conversation_id } = await req.json()
+    const { conversation_id } = await req.json()
 
-    // // And we can run queries in the context of our authenticated user
-    const { data, error } = await supabaseClient.from('recording').select( `${prediction_category}, timestamp, conversation_id`).eq('conversation_id', `${conversation_id}`).order('timestamp', {ascending: false}).limit(50)
+    // And we can run queries in the context of our authenticated user
+    const { data, error } = await supabaseClient.from('recording').select( 'age, timestamp, conversation_id').eq('conversation_id', `${conversation_id}`).order('timestamp', {ascending: false}).limit(50)
     if (error) throw error
+    const ages = data.map((value) => value.age).sort()
 
-    console.log(data)
-    return new Response(JSON.stringify({ user }), {
+    const predicted_age = ages[Math.ceil(ages.length/2)]
+
+    console.log(ages, predicted_age)
+    return new Response(JSON.stringify({ predicted_age }), {
       headers: { ...corsHeaders },
       status: 200,
     })
