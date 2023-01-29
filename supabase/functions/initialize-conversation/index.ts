@@ -47,7 +47,7 @@ serve(async (req: Request) => {
   } catch (error) {
     console.log({error})
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders },
+      headers: corsHeaders,
       status: 400,
     })
   }
