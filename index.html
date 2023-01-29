@@ -8,34 +8,10 @@
       name="bs:input:userId"
       content="type=string,description=Youtube URL"
     />
-    <script
-      defer
-      src="https://static.botstar.com/webview/sdk/webview-sdk-1.0.0.js"
-    ></script>
     <title>Vite + React + TS</title>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      var BotStar = {
-        appId: 's4646aa07-d3eb-4286-954f-86569f1cbb69',
-        mode: 'inline',
-      }
-      !(function (t, a) {
-        var e = function () {
-          ;(e.q = e.q || []).push(arguments)
-        }
-        ;(e.q = e.q || []), (t.BotStarApi = e)
-        !(function () {
-          var t = a.createElement('script')
-          ;(t.type = 'text/javascript'),
-            (t.async = 1),
-            (t.src = 'https://widget.botstar.com/static/js/widget.js')
-          var e = a.getElementsByTagName('script')[0]
-          e.parentNode.insertBefore(t, e)
-        })()
-      })(window, document)
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,20 +1,19 @@
-import { Camera } from './components'
+import { Camera, Chat } from './components'
 import './App.css'
 
 function App() {
   return (
     <>
-      <div className="bg-purple-500 h-screen w-full flex justify-center items-center relative">
+      <div className="bg-slate-50 h-screen w-full flex justify-center items-center relative">
         <Camera />
-        <div className="flex flex-col items-start gap-4 z-10">
-          <img className="ml-4" src="./logo.svg" />
-          <div
-            className="chatbot-container rounded-xl overflow-hidden drop-shadow-2xl "
-            style={{ height: '50rem', width: '50rem' }}
-          ></div>
+        <div className="flex max-w-2xl w-full z-10 h-screen p-8">
+          {/* <img className="ml-4" src="./logo.svg" /> */}
+          {/* <div className="h-1/4"> */}
+          <Chat />
+          {/* </div> */}
         </div>
       </div>
-      <div className="bg-white h-screen w-[661px] absolute top-0" />
+      {/* <div className="bg-white h-screen w-[661px] absolute top-0" /> */}
     </>
   )
 }

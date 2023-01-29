@@ -14,9 +14,9 @@ export const Camera = () => {
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
   //#endregion
   const conversation_id = useGlobalStore(state => state.conversation_id)
-  useLayoutEffect(() => {
-    startCamera()
-  }, [])
+  // useLayoutEffect(() => {
+  //   startCamera()
+  // }, [])
 
   useEffect(() => console.log(conversation_id))
 
