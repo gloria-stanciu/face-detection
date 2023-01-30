@@ -1,24 +1,56 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  MutableRefObject,
+  Ref,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useFaceDetection } from '../hooks'
 import { useGlobalStore } from '../hooks/useGlobalStore'
 import { RecordedVideo } from './RecordedVideo'
+import { motion } from 'framer-motion'
 
-export const Camera = () => {
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: (i: number) => {
+    return {
+      y: 0,
+      opacity: 1,
+      transition: { delay: i * 2.5 },
+    }
+  },
+}
+
+export const Camera = ({
+  startCameraRecording,
+  cameraContainer,
+}: // constraintsRef,
+{
+  startCameraRecording: boolean
+  cameraContainer: any
+}) => {
   //#region - Setup refs -
   const previewVideo = useRef<HTMLVideoElement>(null)
   let canvasRef = useRef<HTMLCanvasElement>(null)
+  // const constraintsRef = useRef(null)
   //#endregion
 
   //#region - Setup states -
   const [camera, setCamera] = useState<MediaStream>()
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
+  // const cameraContainer = useRef(null)
   //#endregion
-  const conversation_id = useGlobalStore(state => state.conversation_id)
-  // useLayoutEffect(() => {
-  //   startCamera()
-  // }, [])
 
-  useEffect(() => console.log(conversation_id))
+  useLayoutEffect(() => {
+    startCamera()
+  }, [])
+
+  useEffect(() => {
+    if (startCameraRecording) {
+      runFaceDetection()
+    }
+  }, [startCameraRecording])
 
   //#region - Setup hooks -
   const { runFaceDetection, stopFaceDetection } = useFaceDetection(
@@ -87,40 +119,40 @@ export const Camera = () => {
   // }
 
   return (
-    <div className="hidden flex-col space-y-8 w-full">
-      <div>
-        {/* <div className="flex flex-row justify-around">
-          <button onClick={startCamera}>Start camera</button>
-          <button
-            onClick={() => {
-              camera ? stopCamera(camera) : null
-              setRecordedChunks([])
-              stopFaceDetection()
-            }}
-          >
-            Stop camera
-          </button>
-        </div> */}
-
-        {/* <h2>Preview recording</h2> */}
-        <div className="relative ">
-          <video
-            hidden
+    <motion.div
+      className="flex-col w-full rounded-xl"
+      ref={cameraContainer}
+      variants={item}
+      custom={0.5}
+      drag
+      dragConstraints={cameraContainer}
+    >
+      <motion.div drag dragConstraints={cameraContainer}>
+        <motion.div className="relative" drag dragConstraints={cameraContainer}>
+          <motion.video
             ref={previewVideo}
             autoPlay={camera ? true : false}
-            onLoadedData={() => {
-              runFaceDetection()
-            }}
+            className="rounded-xl w-1/2"
+            drag
+            dragConstraints={cameraContainer}
+            // onLoadedData={() => {
+            //   runFaceDetection()
+            // }}
           />
-          <canvas ref={canvasRef} className="absolute z-10 top-0 left-0" />
-        </div>
-      </div>
+          <motion.canvas
+            ref={canvasRef}
+            className=" absolute z-10 top-0 left-0 w-[20rem]"
+            drag
+            dragConstraints={cameraContainer}
+          />
+        </motion.div>
+      </motion.div>
 
       {/* 
       -- For seeing the recorded video --
       {recordedChunks.length !== 0 && (
         <RecordedVideo recordedChunks={recordedChunks} />
       )} */}
-    </div>
+    </motion.div>
   )
 }

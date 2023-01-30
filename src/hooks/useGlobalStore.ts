@@ -1,6 +1,5 @@
 import create from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { persist } from 'zustand/middleware'
 import { DetectionModel, FacesToDetect, Models } from '../types'
 
 interface GlobalStore {
@@ -48,7 +47,3 @@ export const useGlobalStore = create(
     },
   }))
 )
-
-const unsub4 = useGlobalStore.subscribe(state => {
-  console.log(state.conversation_id)
-})
