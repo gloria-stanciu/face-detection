@@ -25,17 +25,13 @@ function App() {
   return (
     <>
       <div
-        className="bg-slate-50 h-screen w-full flex justify-center items-center relative"
+        className="bg-slate-50 h-screen w-full flex justify-center items-center relative overflow-hidden"
         // ref={constraintsRef}
       >
-        <Camera
-          startCameraRecording={startCamera}
-          cameraContainer={cameraContainer}
-        />
+        <Camera startCameraRecording={startCamera} />
         {pageState === 'StartForm' && (
           <>
             <StartForm setPageState={setPageState} />
-            <div className="flex-col w-full"></div>
           </>
         )}
         {pageState === 'Chat' && (

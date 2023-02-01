@@ -4,12 +4,12 @@ import { Input, InputTypes } from './Input'
 const FormInputs: InputTypes[] = [
   {
     type: 'text',
-    placeholder: 'Name ',
+    placeholder: 'Name',
     id: 'name',
   },
   {
     type: 'number',
-    placeholder: 'Age ',
+    placeholder: 'Age',
     id: 'age',
   },
   {
@@ -21,7 +21,7 @@ const FormInputs: InputTypes[] = [
   {
     type: 'checkbox',
     placeholder:
-      'I have read the terms and services and agree to be part of the study.',
+      'I have read all the terms written in the consent part and agreed to be part of the study!',
     id: 'terms',
   },
 ]
@@ -37,10 +37,14 @@ export const StartForm = ({
 
   return (
     <div className="w-full h-auto flex items-center justify-center">
-      <div className="bg-white py-6 px-10 sm:max-w-md w-full border border-gray-300 shadow-md rounded-xl">
-        <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-12">
+      <div className="bg-white py-6 px-10 sm:max-w-md w-full border border-gray-300 shadow-md rounded-xl z-30">
+        <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-6">
           Case study
         </div>
+        <p className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
+          ❗<br /> Before starting, please make sure the lighting does not
+          affect the visibility and that your face is seen by the camera.
+        </p>
         <div>
           {FormInputs.map((input, index) => (
             <Input

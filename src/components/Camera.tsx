@@ -24,11 +24,10 @@ const item = {
 
 export const Camera = ({
   startCameraRecording,
-  cameraContainer,
-}: // constraintsRef,
+}: // cameraContainer,
 {
   startCameraRecording: boolean
-  cameraContainer: any
+  // cameraContainer: any
 }) => {
   //#region - Setup refs -
   const previewVideo = useRef<HTMLVideoElement>(null)
@@ -39,7 +38,7 @@ export const Camera = ({
   //#region - Setup states -
   const [camera, setCamera] = useState<MediaStream>()
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([])
-  // const cameraContainer = useRef(null)
+  const cameraContainer = useRef(null)
   //#endregion
 
   useLayoutEffect(() => {
@@ -120,7 +119,7 @@ export const Camera = ({
 
   return (
     <motion.div
-      className="flex-col w-full rounded-xl"
+      className=" rounded-xl absolute top-0 left-0 w-full h-screen"
       ref={cameraContainer}
       variants={item}
       custom={0.5}
@@ -132,7 +131,7 @@ export const Camera = ({
           <motion.video
             ref={previewVideo}
             autoPlay={camera ? true : false}
-            className="rounded-xl w-1/2"
+            className="rounded-xl w-1/4"
             drag
             dragConstraints={cameraContainer}
             // onLoadedData={() => {
