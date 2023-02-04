@@ -1,11 +1,4 @@
-import {
-  MutableRefObject,
-  Ref,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useFaceDetection } from '../hooks'
 import { useGlobalStore } from '../hooks/useGlobalStore'
 import { RecordedVideo } from './RecordedVideo'
@@ -130,13 +123,13 @@ export const Camera = ({
           <motion.video
             ref={previewVideo}
             autoPlay={camera ? true : false}
-            className="rounded-xl w-1/4"
+            className="rounded-xl w-1/4 h-1/4"
             drag
             dragConstraints={cameraContainer}
           />
           <motion.canvas
             ref={canvasRef}
-            className=" absolute z-10 top-0 left-0 w-[20rem]"
+            className=" absolute z-10 top-0 left-0  w-1/4 h-1/4"
             drag
             dragConstraints={cameraContainer}
           />

@@ -6,31 +6,50 @@ import PaperAirplane from '../assets/paper-airplane.svg'
 import BotAvatar from '../assets/bot-avatar.svg'
 
 import { useGlobalStore } from '../hooks/useGlobalStore'
-import { fetchResponse } from '../hooks/api-calls'
+import { fetchResponse, fetchSentiment } from '../hooks/api-calls'
 
 import '../styles/Chat.css'
+import { useSupabase } from '../hooks'
 
 export const Chat = () => {
   const { conversation, addMessage } = useGlobalStore(state => ({
     conversation: state.conversation,
     addMessage: state.addMessage,
   }))
+
+  const { supabase } = useSupabase()
+
   const el = document.getElementById('messages')
   if (el) {
     el.scrollTop = el.scrollHeight
   }
 
-  const sendMessage = (e: any) => {
+  const sendMessage = async (e: any) => {
+    const message = e.target['message-to-send'].value
     e.preventDefault()
+
+    // add mesage to global store
     addMessage({
-      content: e.target['message-to-send'].value,
+      content: message,
       participant: true,
       sentiment: '',
       timestamp: Date.now(),
     })
+
+    // fetch sentiment of message
+    const sentiment = await fetchSentiment(message)
+
+    // add message to db
+    await supabase.from('message').insert({
+      content: message,
+      conversation_id: conversation.id,
+      participant: true,
+      sentiment,
+    })
+
     e.target.reset()
 
-    fetchResponse()
+    await fetchResponse()
   }
 
   return (

@@ -12,7 +12,6 @@ export interface Database {
       conversation: {
         Row: {
           age: number | null
-          conversation: Json | null
           conversation_id: string
           created_at: string | null
           gender: string | null
@@ -20,7 +19,6 @@ export interface Database {
         }
         Insert: {
           age?: number | null
-          conversation?: Json | null
           conversation_id: string
           created_at?: string | null
           gender?: string | null
@@ -28,7 +26,6 @@ export interface Database {
         }
         Update: {
           age?: number | null
-          conversation?: Json | null
           conversation_id?: string
           created_at?: string | null
           gender?: string | null
