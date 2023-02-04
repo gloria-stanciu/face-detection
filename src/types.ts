@@ -18,7 +18,7 @@ export interface Models {
 
 export interface Prediction {
   id?: number
-  conversation_id?: string
+  conversation_id: string
   timestamp?: string
   age: number
   gender: string
@@ -30,4 +30,24 @@ export interface Prediction {
   neutral: number
   sad: number
   surprised: number
+}
+
+export interface OpenAIChoice {
+  text: string
+  index: number
+  logprobs: null | string
+  finish_reason: string
+}
+
+export interface OpenAIResponse {
+  id: string
+  object: string
+  created: number
+  model: string
+  choices: OpenAIChoice[]
+  usage: {
+    prompt_token: number
+    completion_token: number
+    total_tokens: number
+  }
 }

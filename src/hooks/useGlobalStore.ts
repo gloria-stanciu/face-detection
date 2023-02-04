@@ -1,9 +1,24 @@
 import create from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { persist } from 'zustand/middleware'
 import { DetectionModel, FacesToDetect, Models } from '../types'
+import { nanoid } from 'nanoid'
+
+interface Message {
+  participant: boolean
+  timestamp: number
+  content: string
+  sentiment: string
+}
 
 interface GlobalStore {
-  conversation_id: string | null
+  conversation: {
+    id: string
+    messages: Message[]
+    age: number | null
+    gender: 'male' | 'female' | null
+    studyType: null
+  }
   options: {
     numberOfFaces: FacesToDetect
     faceDetectionModel: DetectionModel
@@ -13,7 +28,10 @@ interface GlobalStore {
   }
   updateOptions: (optionToUpdate: Partial<GlobalStore['options']>) => void
   resetDetectionOptions: () => void
-  setConversationId: (conversationId: string | null) => void
+  updateConversation: (
+    valuestoUpdate: Partial<GlobalStore['conversation']>
+  ) => void
+  addMessage: (obj: Message) => void
 }
 
 const initializeDetectionOptions: GlobalStore['options'] = {
@@ -28,22 +46,44 @@ const initializeDetectionOptions: GlobalStore['options'] = {
 }
 
 export const useGlobalStore = create(
-  immer<GlobalStore>(set => ({
-    conversation_id: null,
-    options: initializeDetectionOptions,
+  persist(
+    immer<GlobalStore>(set => ({
+      conversation: {
+        id: nanoid(8),
+        messages: [],
+        age: null,
+        gender: null,
+        studyType: null,
+      },
+      options: initializeDetectionOptions,
 
-    updateOptions: optionToUpdate =>
-      set(state => ({
-        options: {
-          ...state.options,
-          ...optionToUpdate,
-        },
-      })),
-    resetDetectionOptions: () => {
-      set(state => (state.options = initializeDetectionOptions))
-    },
-    setConversationId: conversationId => {
-      set(state => (state.conversation_id = conversationId))
-    },
-  }))
+      updateOptions: optionToUpdate =>
+        set(state => ({
+          options: {
+            ...state.options,
+            ...optionToUpdate,
+          },
+        })),
+      resetDetectionOptions: () => {
+        set(state => (state.options = initializeDetectionOptions))
+      },
+      updateConversation: valuesToUpdate => {
+        set(state => ({
+          conversation: {
+            ...state.conversation,
+            ...valuesToUpdate,
+          },
+        }))
+      },
+      addMessage: (obj: Message) => {
+        set(state => {
+          state.conversation.messages.push(obj)
+        })
+      },
+    })),
+    {
+      name: 'worbee', // unique name
+      // storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+    }
+  )
 )

@@ -1,22 +1,16 @@
 import { Camera, Chat, StartForm } from './components'
 import './App.css'
-import { MutableRefObject, Ref, useEffect, useRef, useState } from 'react'
-import { fetchOpenAI } from './hooks/api-calls'
+import { useEffect, useState } from 'react'
 
 function App() {
   const [pageState, setPageState] = useState('StartForm')
   const [startCamera, setStartCamera] = useState(false)
-  const cameraContainer = useRef<Ref<HTMLDivElement>>(null)
-
-  // useEffect(() => {
-  //   fetchOpenAI()
-  // }, [])
 
   useEffect(() => {
     if (pageState === 'Chat') {
-      if (cameraContainer.current) {
-        // @ts-ignore
-        cameraContainer.current.hidden = true
+      const cameraContainer = document.getElementById('camera-container')
+      if (cameraContainer) {
+        cameraContainer.hidden = true
       }
       setStartCamera(true)
     }
@@ -24,10 +18,7 @@ function App() {
 
   return (
     <>
-      <div
-        className="bg-slate-50 h-screen w-full flex justify-center items-center relative overflow-hidden"
-        // ref={constraintsRef}
-      >
+      <div className="bg-slate-50 h-screen w-full flex justify-center items-center relative overflow-hidden">
         <Camera startCameraRecording={startCamera} />
         {pageState === 'StartForm' && (
           <>

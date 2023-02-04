@@ -21,6 +21,7 @@ export const Input = ({
     return (
       <div className="flex items-center justify-start pb-2 mb-8">
         <input
+          required
           id={id}
           type={type}
           className={`focus:outline-none border-b w-fit placeholder-gray-500 ${className}`}
@@ -47,6 +48,7 @@ export const Input = ({
                   {val}
                 </label>
                 <input
+                  required
                   type={type}
                   id={`${id}-${index}`}
                   name={id}
@@ -63,9 +65,11 @@ export const Input = ({
 
   return (
     <input
+      required
       type={type}
       className={`focus:outline-none border-b w-full pb-2 placeholder-gray-500 mb-8 ${className}`}
       placeholder={placeholder}
+      id={id}
     />
   )
 }

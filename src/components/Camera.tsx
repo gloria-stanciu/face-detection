@@ -24,15 +24,13 @@ const item = {
 
 export const Camera = ({
   startCameraRecording,
-}: // cameraContainer,
-{
+}: {
   startCameraRecording: boolean
-  // cameraContainer: any
 }) => {
   //#region - Setup refs -
   const previewVideo = useRef<HTMLVideoElement>(null)
   let canvasRef = useRef<HTMLCanvasElement>(null)
-  // const constraintsRef = useRef(null)
+  const constraintsRef = useRef(null)
   //#endregion
 
   //#region - Setup states -
@@ -119,6 +117,7 @@ export const Camera = ({
 
   return (
     <motion.div
+      id="camera-container"
       className=" rounded-xl absolute top-0 left-0 w-full h-screen"
       ref={cameraContainer}
       variants={item}
@@ -134,9 +133,6 @@ export const Camera = ({
             className="rounded-xl w-1/4"
             drag
             dragConstraints={cameraContainer}
-            // onLoadedData={() => {
-            //   runFaceDetection()
-            // }}
           />
           <motion.canvas
             ref={canvasRef}

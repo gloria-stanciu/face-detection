@@ -5,12 +5,32 @@ import Smile from '../assets/emotions/smile.svg'
 import PaperAirplane from '../assets/paper-airplane.svg'
 import BotAvatar from '../assets/bot-avatar.svg'
 
+import { useGlobalStore } from '../hooks/useGlobalStore'
+import { fetchResponse } from '../hooks/api-calls'
+
 import '../styles/Chat.css'
 
 export const Chat = () => {
+  const { conversation, addMessage } = useGlobalStore(state => ({
+    conversation: state.conversation,
+    addMessage: state.addMessage,
+  }))
   const el = document.getElementById('messages')
   if (el) {
     el.scrollTop = el.scrollHeight
+  }
+
+  const sendMessage = (e: any) => {
+    e.preventDefault()
+    addMessage({
+      content: e.target['message-to-send'].value,
+      participant: true,
+      sentiment: '',
+      timestamp: Date.now(),
+    })
+    e.target.reset()
+
+    fetchResponse()
   }
 
   return (
@@ -39,35 +59,35 @@ export const Chat = () => {
         id="messages"
         className="flex flex-col flex-1 space-y-4 p-4 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch "
       >
-        <ReceivedMessage message="Can be verified on any platform using docker" />
-        <SentMessage
-          message="Your error message says permission denied, npm global installs
-                  must be given root privileges."
-        />
+        {conversation.messages.map((message, index) =>
+          message.participant ? (
+            <SentMessage message={message.content} key={index} />
+          ) : (
+            <ReceivedMessage message={message.content} key={index} />
+          )
+        )}
       </div>
       <div className="border-t-2 border-gray-200 p-4 mb-2 sm:mb-0">
-        <div className="relative flex">
+        <form className="relative flex" onSubmit={sendMessage}>
           <input
+            id="message-to-send"
             type="text"
             placeholder="Write your message!"
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
           />
           <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none"
-            >
+            <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
               <Smile />
-            </button>
+            </span>
             <button
-              type="button"
+              type="submit"
               className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-purple-500 hover:bg-purple-400 focus:outline-none"
             >
               <span className="font-bold">Send</span>
               <PaperAirplane />
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

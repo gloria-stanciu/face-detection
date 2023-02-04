@@ -1,5 +1,8 @@
 import { Dispatch, SetStateAction } from 'react'
+import { nanoid } from 'nanoid'
 import { Input, InputTypes } from './Input'
+import { useGlobalStore } from '../hooks/useGlobalStore'
+import { useSupabase } from '../hooks'
 
 const FormInputs: InputTypes[] = [
   {
@@ -31,7 +34,30 @@ export const StartForm = ({
 }: {
   setPageState: Dispatch<SetStateAction<string>>
 }) => {
-  const startConversation = async () => {
+  const { conversation, updateConversation } = useGlobalStore(state => ({
+    conversation: state.conversation,
+    updateConversation: state.updateConversation,
+  }))
+
+  const { supabase } = useSupabase()
+
+  const startConversation = async (e: any) => {
+    e.preventDefault()
+    const age = e.target['age'].value
+    const gender = e.target['gender'].value
+
+    updateConversation({
+      age,
+      gender,
+    })
+
+    // add conversation info to db
+    await supabase.from('conversation').upsert({
+      conversation_id: conversation.id,
+      age,
+      gender,
+    })
+
     setPageState('Chat')
   }
 
@@ -45,7 +71,7 @@ export const StartForm = ({
           ❗<br /> Before starting, please make sure the lighting does not
           affect the visibility and that your face is seen by the camera.
         </p>
-        <div>
+        <form onSubmit={startConversation}>
           {FormInputs.map((input, index) => (
             <Input
               key={index}
@@ -57,13 +83,13 @@ export const StartForm = ({
           ))}
           <div className="flex justify-center my-6">
             <button
-              onClick={startConversation}
+              type="submit"
               className=" rounded-full  p-3 w-full sm:w-56   bg-purple-500 text-white text-lg font-semibold "
             >
               Start conversation
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

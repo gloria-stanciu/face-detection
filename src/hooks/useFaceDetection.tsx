@@ -188,7 +188,7 @@ export const useFaceDetection = (
               resizedResults.detection.box.bottomRight
             ).draw(canvas.current)
           }
-          const conversation_id = useGlobalStore.getState().conversation_id
+          const conversation_id = useGlobalStore.getState().conversation.id
           if (conversation_id) {
             storePredictionLocally({
               conversation_id,
