@@ -2,6 +2,13 @@ import { ReceivedMessage } from './ReceivedMessage'
 import { SentMessage } from './SentMessage'
 
 import Smile from '../assets/emotions/smile.svg'
+import Angry from '../assets/emotions/angry.svg'
+import Disgusted from '../assets/emotions/disgusted.svg'
+import Fearful from '../assets/emotions/fearful.svg'
+import Neutral from '../assets/emotions/neutral.svg'
+import Sad from '../assets/emotions/sad.svg'
+import Surprised from '../assets/emotions/surprised.svg'
+
 import PaperAirplane from '../assets/paper-airplane.svg'
 import BotAvatar from '../assets/bot-avatar.svg'
 
@@ -10,6 +17,8 @@ import { fetchResponse, fetchSentiment } from '../hooks/api-calls'
 
 import '../styles/Chat.css'
 import { useSupabase } from '../hooks'
+import { useEffect, useState } from 'react'
+import { TypingDots } from './TypingDots'
 
 export const Chat = () => {
   const { conversation, addMessage } = useGlobalStore(state => ({
@@ -18,16 +27,21 @@ export const Chat = () => {
   }))
 
   const { supabase } = useSupabase()
+  const [isTyping, setIsTyping] = useState(false)
 
-  const el = document.getElementById('messages')
-  if (el) {
-    el.scrollTop = el.scrollHeight
-  }
+  useEffect(() => {
+    const el = document.getElementById('messages')
+    if (el) {
+      el.scrollTop = el.scrollHeight
+    }
+  }, [conversation.messages, isTyping])
 
   const sendMessage = async (e: any) => {
     const message = e.target['message-to-send'].value
     e.preventDefault()
+    e.target.reset()
 
+    setIsTyping(true)
     // add mesage to global store
     addMessage({
       content: message,
@@ -47,9 +61,8 @@ export const Chat = () => {
       sentiment,
     })
 
-    e.target.reset()
-
     await fetchResponse()
+    setIsTyping(false)
   }
 
   return (
@@ -85,27 +98,37 @@ export const Chat = () => {
             <ReceivedMessage message={message.content} key={index} />
           )
         )}
+        {isTyping && <TypingDots key="typing dots" />}
       </div>
       <div className="border-t-2 border-gray-200 p-4 mb-2 sm:mb-0">
-        <form className="relative flex" onSubmit={sendMessage}>
+        <form
+          className="relative flex items-center gap-2"
+          onSubmit={sendMessage}
+        >
           <input
             id="message-to-send"
             type="text"
             placeholder="Write your message!"
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
           />
-          <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-            <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
-              <Smile />
-            </span>
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-purple-500 hover:bg-purple-400 focus:outline-none"
-            >
-              <span className="font-bold">Send</span>
-              <PaperAirplane />
-            </button>
-          </div>
+          {/* <div className="absolute right-0 items-center inset-y-0 hidden sm:flex"> */}
+          <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
+            {conversation.sentiment === 'happy' && <Smile />}
+            {conversation.sentiment === 'sad' && <Sad />}
+            {conversation.sentiment === 'angry' && <Angry />}
+            {conversation.sentiment === 'fearful' && <Fearful />}
+            {conversation.sentiment === 'disgusted' && <Disgusted />}
+            {conversation.sentiment === 'neutral' && <Neutral />}
+            {conversation.sentiment === 'surprised' && <Surprised />}
+          </span>
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-purple-500 hover:bg-purple-400 focus:outline-none"
+          >
+            <span className="font-bold">Send</span>
+            <PaperAirplane />
+          </button>
+          {/* </div> */}
         </form>
       </div>
     </div>

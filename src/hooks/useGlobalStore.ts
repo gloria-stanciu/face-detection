@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { persist } from 'zustand/middleware'
-import { DetectionModel, FacesToDetect, Models } from '../types'
+import { DetectionModel, FacesToDetect, Models, SentimentType } from '../types'
 import { nanoid } from 'nanoid'
 
 interface Message {
@@ -18,6 +18,7 @@ interface GlobalStore {
     age: number | null
     gender: 'male' | 'female' | null
     studyType: null
+    sentiment: SentimentType
   }
   options: {
     numberOfFaces: FacesToDetect
@@ -54,6 +55,7 @@ export const useGlobalStore = create(
         age: null,
         gender: null,
         studyType: null,
+        sentiment: 'neutral',
       },
       options: initializeDetectionOptions,
 

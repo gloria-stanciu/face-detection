@@ -12,10 +12,20 @@ import {
   matchDimensions,
 } from 'face-api.js'
 import { useEffect, useState } from 'react'
-import { Prediction } from '../types'
+import { Prediction, Sentiments, SentimentType } from '../types'
 import { useGlobalStore } from './useGlobalStore'
 import { useSupabase } from './index'
 import throttle from 'lodash.throttle'
+
+const threshold: Sentiments = {
+  angry: 0.15,
+  disgusted: 0.15,
+  fearful: 0.15,
+  happy: 0.8,
+  neutral: 0.15,
+  sad: 0.15,
+  surprised: 0.15,
+} as const
 
 let isCameraOn = false
 //@ts-ignore
@@ -121,6 +131,28 @@ export const useFaceDetection = (
     return avgPredictedAge
   }
 
+  const storePredominantSentiment = (sentiments: Sentiments) => {
+    const sentimentsValue = Object.entries(sentiments).map(
+      ([sentiment, value]) => {
+        return {
+          sentiment,
+          value: value - threshold[sentiment as keyof typeof threshold],
+        }
+      }
+    )
+
+    sentimentsValue.sort((a, b) => b.value - a.value)
+
+    if (
+      useGlobalStore.getState().conversation.sentiment !==
+      sentimentsValue[0].sentiment
+    ) {
+      useGlobalStore.getState().updateConversation({
+        sentiment: sentimentsValue[0].sentiment as SentimentType,
+      })
+    }
+  }
+
   const storePredictionsToDB = throttle(async () => {
     if (predictions.length !== 0) {
       await supabase.from('recording').insert(predictions)
@@ -154,7 +186,7 @@ export const useFaceDetection = (
 
       const results = await detection
 
-      console.log('All faces detected')
+      // console.log('All faces detected')
 
       if (!canvas.current) return
 
@@ -163,7 +195,7 @@ export const useFaceDetection = (
           results,
           matchDimensions(canvas.current, video.current, true)
         )
-        console.log('Attempt to draw')
+        // console.log('Attempt to draw')
         clearCanvas()
 
         if (options.withAgeAndGender) {
@@ -203,11 +235,7 @@ export const useFaceDetection = (
               sad: resizedResults.expressions.sad,
               surprised: resizedResults.expressions.surprised,
             })
-            console.log({
-              conversation_id,
-              age: Number(age.toFixed(0)),
-              gender,
-              gender_probability: resizedResults.genderProbability,
+            storePredominantSentiment({
               angry: resizedResults.expressions.angry,
               disgusted: resizedResults.expressions.disgusted,
               fearful: resizedResults.expressions.fearful,
@@ -246,8 +274,7 @@ export const useFaceDetection = (
       }
       // await loadExpressionModel()
       // const detectionOptions = getFaceDetectorOptions()
-      console.log('Attempt to detect all faces')
-      console.log({ detectionOptions })
+      // console.log('Attempt to detect all faces')
       await detect(detectionOptions)
     } catch (error) {
       console.log(error)

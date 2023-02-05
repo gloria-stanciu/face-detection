@@ -1,6 +1,7 @@
 import { Camera, Chat, StartForm } from './components'
 import './App.css'
 import { useEffect, useState } from 'react'
+import { useGlobalStore } from './hooks/useGlobalStore'
 
 function App() {
   const [pageState, setPageState] = useState('StartForm')

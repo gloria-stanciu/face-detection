@@ -16,6 +16,25 @@ export interface Models {
   }
 }
 
+export type SentimentType =
+  | 'happy'
+  | 'sad'
+  | 'angry'
+  | 'disgusted'
+  | 'fearful'
+  | 'neutral'
+  | 'surprised'
+
+export interface Sentiments {
+  disgusted: number
+  fearful: number
+  happy: number
+  neutral: number
+  sad: number
+  surprised: number
+  angry: number
+}
+
 export interface Prediction {
   id?: number
   conversation_id: string
