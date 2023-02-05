@@ -8,6 +8,7 @@ import Fearful from '../assets/emotions/fearful.svg'
 import Neutral from '../assets/emotions/neutral.svg'
 import Sad from '../assets/emotions/sad.svg'
 import Surprised from '../assets/emotions/surprised.svg'
+import Logo from '../assets/logo.svg'
 
 import PaperAirplane from '../assets/paper-airplane.svg'
 import BotAvatar from '../assets/bot-avatar.svg'
@@ -81,7 +82,9 @@ export const Chat = () => {
           </div>
           <div className="flex flex-col leading-tight">
             <div className="text-2xl mt-1 flex items-center">
-              <span className="text-gray-700 mr-3">Chatbot name</span>
+              <span className="text-gray-700 mr-3">
+                <Logo />
+              </span>
             </div>
             <span className="text-lg text-gray-600">Driven by OpenAI</span>
           </div>
