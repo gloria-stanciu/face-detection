@@ -1,25 +1,19 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { nanoid } from 'nanoid'
 import { Input, InputTypes } from './Input'
 import { useGlobalStore } from '../hooks/useGlobalStore'
 import { useSupabase } from '../hooks'
+import { useSearchParams } from 'react-router-dom'
+import PageNotFound from '../assets/page-not-found.svg'
+
+type CaseType = 'INIBOT' | 'SUBEMO' | 'EMOCOM'
+const caseStudyTypes: CaseType[] = ['INIBOT', 'SUBEMO', 'EMOCOM']
 
 const FormInputs: InputTypes[] = [
   {
-    type: 'text',
-    placeholder: 'Name',
-    id: 'name',
-  },
-  {
-    type: 'number',
-    placeholder: 'Age',
-    id: 'age',
-  },
-  {
-    type: 'radio',
-    placeholder: 'Gender',
-    inputs: ['Male', 'Female'],
-    id: 'gender',
+    type: 'input',
+    placeholder: 'Nickname',
+    id: 'nickname',
   },
   {
     type: 'checkbox',
@@ -39,58 +33,85 @@ export const StartForm = ({
     updateConversation: state.updateConversation,
   }))
 
+  const [error, setError] = useState(false)
   const { supabase } = useSupabase()
+  const [params] = useSearchParams()
+
+  useEffect(() => {
+    const user_id = params.get('user_id')
+    const case_id = params.get('case_id')
+
+    if (!user_id || !case_id) {
+      setError(true)
+    }
+    if (user_id) {
+      updateConversation({ id: user_id })
+    }
+    if (case_id && caseStudyTypes.includes(case_id as CaseType)) {
+      updateConversation({ studyType: case_id as CaseType })
+    }
+  }, [])
 
   const startConversation = async (e: any) => {
     e.preventDefault()
-    const age = e.target['age'].value
-    const gender = e.target['gender'].value
-
-    updateConversation({
-      age,
-      gender,
-    })
+    const nickname = e.target['nickname'].value
+    updateConversation({ nickname })
 
     // add conversation info to db
     await supabase.from('conversation').upsert({
       conversation_id: conversation.id,
-      age,
-      gender,
+      study_type: conversation.studyType,
     })
 
     setPageState('Chat')
   }
 
   return (
-    <div className="w-full h-auto flex items-center justify-center">
-      <div className="bg-white py-6 px-10 sm:max-w-md w-full border border-gray-300 shadow-md rounded-xl z-30">
-        <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-6">
-          Case study
+    <>
+      {error && (
+        <div className="w-full h-full flex items-center bg-zinc-200 justify-center z-10 flex-col gap-4">
+          <PageNotFound />
+          <span className="sm:text-xl lg:text-6xl font-extrabold text-gray-600 p-4 rounded-md">
+            Something's missing
+          </span>
+          <span className="text-3xl text-gray-400 font-bold">
+            URL is incorrect
+          </span>
         </div>
-        <p className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
-          ❗<br /> Before starting, please make sure the lighting does not
-          affect the visibility and that your face is seen by the camera.
-        </p>
-        <form onSubmit={startConversation}>
-          {FormInputs.map((input, index) => (
-            <Input
-              key={index}
-              placeholder={input.placeholder}
-              type={input.type}
-              inputs={input.inputs}
-              id={input.id}
-            />
-          ))}
-          <div className="flex justify-center my-6">
-            <button
-              type="submit"
-              className=" rounded-full  p-3 w-full sm:w-56   bg-purple-500 text-white text-lg font-semibold "
-            >
-              Start conversation
-            </button>
+      )}
+      {!error && (
+        <div className="w-full h-auto flex items-center justify-center">
+          <div className="bg-white py-6 px-10 sm:max-w-md w-full border border-gray-300 shadow-md rounded-xl z-30">
+            <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-6">
+              Case study
+            </div>
+            <p className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
+              ❗<br /> Before starting, please make sure the lighting does not
+              affect the visibility and clarity of the recording and that your
+              face is seen by the camera.
+            </p>
+            <form onSubmit={startConversation}>
+              {FormInputs.map((input, index) => (
+                <Input
+                  key={index}
+                  placeholder={input.placeholder}
+                  type={input.type}
+                  inputs={input.inputs}
+                  id={input.id}
+                />
+              ))}
+              <div className="flex justify-center my-6">
+                <button
+                  type="submit"
+                  className=" rounded-full  p-3 w-full sm:w-56   bg-purple-500 text-white text-lg font-semibold "
+                >
+                  Start conversation
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   )
 }

@@ -12,38 +12,20 @@ const convertToPrompMessages = () => {
   }, '')
 }
 
-const getSentimentFromMessage = () => {
-  const messages = useGlobalStore.getState().conversation.messages
-  const lastMessage = messages[messages.length - 1]
-  return lastMessage.sentiment as SentimentType
-}
-
-export const getPromptBySentiment = (
+export const requestCommentAboutSentiment = async (
   sentiment: SentimentType,
-  messages: string
+  name: string
 ) => {
-  switch (sentiment) {
-    case 'angry':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. The human is angry. ${messages} \n You: `
-    case 'disgusted':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. The human is disgusted. ${messages} \n You: `
-    case 'fearful':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. The human is fearful. ${messages} \n You: `
-    case 'happy':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. The human is happy. ${messages} \n You: `
-    case 'neutral':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. ${messages} \n You: `
-    case 'sad':
-      return `Vorbee is a virtual assistant that makes the human smile and be happy. The human is sad and it can be cheered up with jokes and encouragements. ${messages} \n You: `
-    case 'surprised':
-      return `Vorbee is a virtual assistant that asks questions about hobbies. The human is surprised by Vorbee's reply. ${messages} \n You: `
-  }
-}
-
-export const fetchResponse = async () => {
   const { supabase } = useSupabase()
-  const messagesToAdd = convertToPrompMessages()
-  const sentiment = getSentimentFromMessage()
+
+  if (!['happy', 'sad'].includes(sentiment)) return
+
+  let prompt
+  if (sentiment === 'happy') {
+    prompt = `Make a comment to ${name} about noticing that ${name} is ${sentiment}!`
+  } else if (sentiment === 'sad') {
+    prompt = `${name} is ${sentiment}. Try to cheer ${name} up!`
+  }
 
   const res = await fetch(
     'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
@@ -56,7 +38,50 @@ export const fetchResponse = async () => {
       body: JSON.stringify({
         model: 'text-davinci-003',
         name: 'Functions',
-        prompt: `Vorbee is a virtual assistant that asks questions about hobbies. The human is ${sentiment}. ${messagesToAdd} \n You: `,
+        prompt: prompt,
+        temperature: 0.5,
+        max_tokens: 60,
+        top_p: 1.0,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.0,
+        stop: 'You: ',
+      }),
+    }
+  )
+  const response: OpenAIResponse = await res.json()
+  console.log({ response })
+
+  useGlobalStore.getState().addMessage({
+    content: response.choices[0].text,
+    participant: false,
+    sentiment: '',
+    timestamp: Date.now(),
+  })
+
+  await supabase.from('message').insert({
+    content: response.choices[0].text,
+    participant: false,
+  })
+}
+
+export const fetchResponse = async () => {
+  const { supabase } = useSupabase()
+  const messagesToAdd = convertToPrompMessages()
+
+  const prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+
+  const res = await fetch(
+    'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'text-davinci-003',
+        name: 'Functions',
+        prompt: prompt,
         temperature: 0.5,
         max_tokens: 60,
         top_p: 1.0,

@@ -18,13 +18,13 @@ import { useSupabase } from './index'
 import throttle from 'lodash.throttle'
 
 const threshold: Sentiments = {
-  angry: 0.15,
+  angry: 0.2,
   disgusted: 0.15,
   fearful: 0.15,
-  happy: 0.8,
-  neutral: 0.15,
-  sad: 0.15,
-  surprised: 0.15,
+  happy: 0.95,
+  neutral: 0.99,
+  sad: 0.04,
+  surprised: 0.8,
 } as const
 
 let isCameraOn = false

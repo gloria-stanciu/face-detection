@@ -14,12 +14,17 @@ import PaperAirplane from '../assets/paper-airplane.svg'
 import BotAvatar from '../assets/bot-avatar.svg'
 
 import { useGlobalStore } from '../hooks/useGlobalStore'
-import { fetchResponse, fetchSentiment } from '../hooks/api-calls'
+import {
+  fetchResponse,
+  fetchSentiment,
+  requestCommentAboutSentiment,
+} from '../hooks/api-calls'
 
 import '../styles/Chat.css'
 import { useSupabase } from '../hooks'
 import { useEffect, useState } from 'react'
 import { TypingDots } from './TypingDots'
+import { SentimentType } from '../types'
 
 export const Chat = () => {
   const { conversation, addMessage } = useGlobalStore(state => ({
@@ -36,6 +41,25 @@ export const Chat = () => {
       el.scrollTop = el.scrollHeight
     }
   }, [conversation.messages, isTyping])
+
+  const fetchSentimentComment = async (
+    sentiment: SentimentType,
+    name: string
+  ) => {
+    setIsTyping(true)
+    await requestCommentAboutSentiment(sentiment, name)
+    setIsTyping(false)
+  }
+
+  useEffect(() => {
+    if (
+      conversation.studyType === 'EMOCOM' &&
+      conversation.messages[conversation.messages?.length - 2]?.participant &&
+      !isTyping
+    ) {
+      fetchSentimentComment(conversation.sentiment, conversation.nickname)
+    }
+  }, [conversation.sentiment])
 
   const sendMessage = async (e: any) => {
     const message = e.target['message-to-send'].value
@@ -114,16 +138,17 @@ export const Chat = () => {
             placeholder="Write your message!"
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
           />
-          {/* <div className="absolute right-0 items-center inset-y-0 hidden sm:flex"> */}
-          <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
-            {conversation.sentiment === 'happy' && <Smile />}
-            {conversation.sentiment === 'sad' && <Sad />}
-            {conversation.sentiment === 'angry' && <Angry />}
-            {conversation.sentiment === 'fearful' && <Fearful />}
-            {conversation.sentiment === 'disgusted' && <Disgusted />}
-            {conversation.sentiment === 'neutral' && <Neutral />}
-            {conversation.sentiment === 'surprised' && <Surprised />}
-          </span>
+          {conversation.studyType !== 'INIBOT' && (
+            <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
+              {conversation.sentiment === 'happy' && <Smile />}
+              {conversation.sentiment === 'sad' && <Sad />}
+              {conversation.sentiment === 'angry' && <Angry />}
+              {conversation.sentiment === 'fearful' && <Fearful />}
+              {conversation.sentiment === 'disgusted' && <Disgusted />}
+              {conversation.sentiment === 'neutral' && <Neutral />}
+              {conversation.sentiment === 'surprised' && <Surprised />}
+            </span>
+          )}
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-purple-500 hover:bg-purple-400 focus:outline-none"

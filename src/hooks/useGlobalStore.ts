@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { persist } from 'zustand/middleware'
 import { DetectionModel, FacesToDetect, Models, SentimentType } from '../types'
-import { nanoid } from 'nanoid'
 
 interface Message {
   participant: boolean
@@ -14,10 +13,11 @@ interface Message {
 interface GlobalStore {
   conversation: {
     id: string
+    nickname: string
     messages: Message[]
     age: number | null
     gender: 'male' | 'female' | null
-    studyType: null
+    studyType: null | 'INIBOT' | 'SUBEMO' | 'EMOCOM'
     sentiment: SentimentType
   }
   options: {
@@ -50,7 +50,8 @@ export const useGlobalStore = create(
   persist(
     immer<GlobalStore>(set => ({
       conversation: {
-        id: nanoid(8),
+        id: '',
+        nickname: '',
         messages: [],
         age: null,
         gender: null,
@@ -84,7 +85,7 @@ export const useGlobalStore = create(
       },
     })),
     {
-      name: 'worbee', // unique name
+      name: 'vorbee', // unique name
       // storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
     }
   )
