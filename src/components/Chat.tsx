@@ -54,8 +54,9 @@ export const Chat = () => {
   useEffect(() => {
     if (
       conversation.studyType === 'EMOCOM' &&
-      conversation.messages[conversation.messages?.length - 2]?.participant &&
-      !isTyping
+      !conversation.messages[conversation.messages?.length - 1]?.participant &&
+      !isTyping &&
+      !conversation.messages.slice(-3).every(value => !value.participant)
     ) {
       fetchSentimentComment(conversation.sentiment, conversation.nickname)
     }

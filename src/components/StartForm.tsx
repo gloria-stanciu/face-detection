@@ -81,15 +81,33 @@ export const StartForm = ({
       )}
       {!error && (
         <div className="w-full h-auto flex items-center justify-center">
-          <div className="bg-white py-6 px-10 sm:max-w-md w-full border border-gray-300 shadow-md rounded-xl z-30">
+          <div className="bg-white py-6 px-10 md:max-w-full border border-gray-300 shadow-md rounded-xl z-30">
             <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-6">
               Case study
             </div>
-            <p className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
-              ❗<br /> Before starting, please make sure the lighting does not
-              affect the visibility and clarity of the recording and that your
-              face is seen by the camera.
-            </p>
+            <div className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
+              <p>
+                ❗<b>Before starting</b>
+              </p>
+              <ol className="list-decimal ml-6">
+                <li className="my-1">Position your camera at eye level</li>
+                <li className="my-1">
+                  Position your camera 0.5 meters (1.5-2 feet) away from you to
+                  provide good framing
+                </li>
+                <li className="my-1">
+                  Make sure that your face is framed correctly
+                </li>
+                <li className="my-1">
+                  Make sure the lighting does not affect the visibility and
+                  clarity of the recording
+                </li>
+                <li className="my-1">
+                  The camera should only capture yourselve from shoulders
+                  upwards
+                </li>
+              </ol>
+            </div>
             <form onSubmit={startConversation}>
               {FormInputs.map((input, index) => (
                 <Input

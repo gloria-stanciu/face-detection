@@ -18,13 +18,30 @@ export const requestCommentAboutSentiment = async (
 ) => {
   const { supabase } = useSupabase()
 
-  if (!['happy', 'sad'].includes(sentiment)) return
+  if (sentiment === 'neutral') return
 
   let prompt
-  if (sentiment === 'happy') {
-    prompt = `Make a comment to ${name} about noticing that ${name} is ${sentiment}!`
-  } else if (sentiment === 'sad') {
-    prompt = `${name} is ${sentiment}. Try to cheer ${name} up!`
+  switch (sentiment) {
+    case 'angry':
+      prompt = `${name} is angry. Send a message to calm ${name} down!`
+      break
+    case 'disgusted':
+      prompt = `${name} is disgusted. Send a message to make ${name} feel better!`
+      break
+    case 'fearful':
+      prompt = `${name} is afraid. Send a message to comfort ${name}!`
+      break
+    case 'happy':
+      prompt = `Make a comment to ${name} about noticing that ${name} is ${sentiment}!`
+      break
+    case 'sad':
+      prompt = `${name} is sad. Send a message to cheer ${name} up!`
+      break
+    case 'surprised':
+      prompt = `${name} is surprised. Send a message to explain the idea to ${name}!`
+      break
+    default:
+      break
   }
 
   const res = await fetch(
@@ -60,6 +77,7 @@ export const requestCommentAboutSentiment = async (
 
   await supabase.from('message').insert({
     content: response.choices[0].text,
+    conversation_id: useGlobalStore.getState().conversation.id,
     participant: false,
   })
 }
@@ -103,6 +121,7 @@ export const fetchResponse = async () => {
 
   await supabase.from('message').insert({
     content: response.choices[0].text,
+    conversation_id: useGlobalStore.getState().conversation.id,
     participant: false,
   })
 }

@@ -19,11 +19,11 @@ import throttle from 'lodash.throttle'
 
 const threshold: Sentiments = {
   angry: 0.2,
-  disgusted: 0.15,
-  fearful: 0.15,
+  disgusted: 0.7,
+  fearful: 0.5,
   happy: 0.95,
-  neutral: 0.99,
-  sad: 0.04,
+  neutral: 0.9,
+  sad: 0.2,
   surprised: 0.8,
 } as const
 
@@ -132,6 +132,7 @@ export const useFaceDetection = (
   }
 
   const storePredominantSentiment = (sentiments: Sentiments) => {
+    console.log(sentiments)
     const sentimentsValue = Object.entries(sentiments).map(
       ([sentiment, value]) => {
         return {
