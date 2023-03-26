@@ -58,6 +58,23 @@ export interface Database {
           timestamp?: string | null
         }
       }
+      questionnaire: {
+        Row: {
+          conversation_id: string | null
+          id: number
+          responses: Json | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          id?: number
+          responses?: Json | null
+        }
+        Update: {
+          conversation_id?: string | null
+          id?: number
+          responses?: Json | null
+        }
+      }
       recording: {
         Row: {
           age: number
@@ -113,6 +130,9 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }

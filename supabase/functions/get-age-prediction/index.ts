@@ -3,8 +3,9 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Content-Type': 'application/json'
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+  'Content-Type': 'application/json',
 }
 
 console.log(`Function "get-age-prediction"!`)
@@ -38,13 +39,18 @@ serve(async (req: Request) => {
     const { conversation_id } = await req.json()
 
     // And we can run queries in the context of our authenticated user
-    const { data, error } = await supabaseClient.from('recording').select( 'age, timestamp, conversation_id').eq('conversation_id', `${conversation_id}`).order('timestamp', {ascending: false}).limit(50)
+    const { data, error } = await supabaseClient
+      .from('recording')
+      .select('age, timestamp, conversation_id')
+      .eq('conversation_id', `${conversation_id}`)
+      .order('timestamp', { ascending: false })
+      .limit(50)
     if (error) throw error
-    const ages = data.map((value) => value.age).sort()
+    const ages = data.map(value => value.age).sort()
 
-    const predicted_age = ages[Math.ceil(ages.length/2)]
+    const predicted_age = ages[Math.ceil(ages.length / 2)]
 
-    console.log(ages, predicted_age)
+    // console.log(ages, predicted_age)
     return new Response(JSON.stringify({ predicted_age }), {
       headers: { ...corsHeaders },
       status: 200,

@@ -22,11 +22,15 @@ import {
 
 import '../styles/Chat.css'
 import { useSupabase } from '../hooks'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { TypingDots } from './TypingDots'
 import { SentimentType } from '../types'
 
-export const Chat = () => {
+export const Chat = ({
+  setPageState,
+}: {
+  setPageState: Dispatch<SetStateAction<string>>
+}) => {
   const { conversation, addMessage } = useGlobalStore(state => ({
     conversation: state.conversation,
     addMessage: state.addMessage,
@@ -34,6 +38,20 @@ export const Chat = () => {
 
   const { supabase } = useSupabase()
   const [isTyping, setIsTyping] = useState(false)
+  const [showLinkToForm, setShowLinkToForm] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowLinkToForm(true)
+      addMessage({
+        content:
+          'Thank you, you may continue chatting with me. Whenever you are ready, use the link on the screen to complete the questionnaire, conclude the session and the study.',
+        participant: false,
+        sentiment: '',
+        timestamp: Date.now(),
+      })
+    }, 2 * 60 * 1000)
+  }, [])
 
   useEffect(() => {
     const el = document.getElementById('messages')
@@ -92,9 +110,9 @@ export const Chat = () => {
   }
 
   return (
-    <div className="flex-1 justify-between flex flex-col bg-white rounded-xl border border-gray-300 shadow-md">
+    <div className="flex-1 justify-between flex flex-col bg-white rounded-xl border border-gray-300 shadow-md ">
       <div className="flex sm:items-center justify-between p-4 border-b-2 border-gray-200 ">
-        <div className="relative flex items-center space-x-4">
+        <div className="relative flex items-center space-x-4 w-full">
           <div className="relative">
             <span className="absolute text-green-500 right-0 bottom-0">
               <svg width="20" height="20">
@@ -113,6 +131,16 @@ export const Chat = () => {
             </div>
             <span className="text-lg text-gray-600">Driven by OpenAI</span>
           </div>
+          {showLinkToForm && (
+            <div className="flex justify-end flex-1">
+              <button
+                className="hover:bg-purple-500 hover:text-white py-2 px-4 rounded-md text-purple-500"
+                onClick={() => setPageState('Questionnaire')}
+              >
+                Go to <span className="font-bold">Questionnaire</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div

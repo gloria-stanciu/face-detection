@@ -18,12 +18,12 @@ import { useSupabase } from './index'
 import throttle from 'lodash.throttle'
 
 const threshold: Sentiments = {
-  angry: 0.2,
-  disgusted: 0.7,
+  angry: 0.4,
+  disgusted: 0.5,
   fearful: 0.5,
   happy: 0.95,
   neutral: 0.9,
-  sad: 0.2,
+  sad: 0.4,
   surprised: 0.8,
 } as const
 
@@ -132,7 +132,7 @@ export const useFaceDetection = (
   }
 
   const storePredominantSentiment = (sentiments: Sentiments) => {
-    console.log(sentiments)
+    // console.log(sentiments)
     const sentimentsValue = Object.entries(sentiments).map(
       ([sentiment, value]) => {
         return {

@@ -66,7 +66,7 @@ export const requestCommentAboutSentiment = async (
     }
   )
   const response: OpenAIResponse = await res.json()
-  console.log({ response })
+  // console.log({ response })
 
   useGlobalStore.getState().addMessage({
     content: response.choices[0].text,
@@ -110,7 +110,7 @@ export const fetchResponse = async () => {
     }
   )
   const response: OpenAIResponse = await res.json()
-  console.log({ response })
+  // console.log({ response })
 
   useGlobalStore.getState().addMessage({
     content: response.choices[0].text,
@@ -127,28 +127,32 @@ export const fetchResponse = async () => {
 }
 
 export const fetchSentiment = async (message: string) => {
-  const res = await fetch(
-    'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'text-davinci-003',
-        name: 'Functions',
-        prompt: `Decide whether a message's sentiment is happy, sad, amused, angry or neutral,. \n Message: ${message} \n`,
-        temperature: 0,
-        max_tokens: 60,
-        top_p: 1,
-        frequency_penalty: 0.5,
-        presence_penalty: 0,
-        stop: '\n',
-      }),
-    }
-  )
+  try {
+    const res = await fetch(
+      'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'text-davinci-003',
+          name: 'Functions',
+          prompt: `Decide whether a message's sentiment is happy, sad, amused, angry or neutral,. \n Message: ${message} \n`,
+          temperature: 0,
+          max_tokens: 60,
+          top_p: 1,
+          frequency_penalty: 0.5,
+          presence_penalty: 0,
+          stop: '\n',
+        }),
+      }
+    )
 
-  const response: OpenAIResponse = await res.json()
-  return response.choices[0].text.replace('\n', '')
+    const response: OpenAIResponse = await res.json()
+    return response.choices[0].text.replace('\n', '')
+  } catch (err) {
+    console.log(err)
+  }
 }

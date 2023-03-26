@@ -39,6 +39,11 @@ export const Camera = ({
   useEffect(() => {
     if (startCameraRecording) {
       runFaceDetection()
+    } else {
+      stopFaceDetection()
+      if (camera) {
+        stopCamera(camera)
+      }
     }
   }, [startCameraRecording])
 
@@ -81,13 +86,13 @@ export const Camera = ({
     setCamera(stream)
     recorder.start()
 
-    const stopped = new Promise((resolve, reject) => {
-      recorder.onstop = () => {
-        stopCamera(stream)
-        resolve(null)
-      }
-      recorder.onerror = event => reject(event)
-    })
+    // const stopped = new Promise((resolve, reject) => {
+    // recorder.onstop = () => {
+    //   stopCamera(stream)
+    //   resolve(null)
+    // }
+    // recorder.onerror = event => reject(event)
+    // })
 
     // await wait(delayInMS)
 

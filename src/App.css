@@ -1,6 +1,9 @@
 * {
   box-sizing: border-box;
 }
+body {
+  font-family: 'Inter', sans-serif;
+}
 
 .blue-circle {
   animation-delay: 0.1s;
