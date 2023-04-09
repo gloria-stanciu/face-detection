@@ -46,7 +46,7 @@ export const requestCommentAboutSentiment = async (
       prompt = `${name} is sad. Send a message to cheer ${name} up!`
       break
     case 'surprised':
-      prompt = `${name} is surprised. Send a message to explain the idea to ${name}!`
+      prompt = `${name} is surprised. Explain the topic ${name}!`
       break
     default:
       break

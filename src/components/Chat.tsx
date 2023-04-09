@@ -40,7 +40,6 @@ export const Chat = ({
   const { supabase } = useSupabase()
   const [isTyping, setIsTyping] = useState(false)
   const [showLinkToForm, setShowLinkToForm] = useState(false)
-  const [fetched, setFetched] = useState(false)
 
   useEffect(() => {
     setTimeout(() => {
@@ -67,17 +66,15 @@ export const Chat = ({
     name: string
   ) => {
     setIsTyping(true)
-    setFetched(true)
     await requestCommentAboutSentiment(sentiment, name)
     setIsTyping(false)
-    setFetched(false)
   }
 
-  const debounceSentimentComment = debounce(async (sentiment, nickname) => {
-    if (!fetched) {
+  const debounceSentimentComment = useRef(
+    debounce(async (sentiment, nickname) => {
       await fetchSentimentComment(sentiment, nickname)
-    }
-  }, 1000)
+    }, 500)
+  ).current
 
   useEffect(() => {
     if (
