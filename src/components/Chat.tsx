@@ -22,7 +22,8 @@ import {
 
 import '../styles/Chat.css'
 import { useSupabase } from '../hooks'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { debounce } from 'lodash'
 import { TypingDots } from './TypingDots'
 import { SentimentType } from '../types'
 
@@ -39,6 +40,7 @@ export const Chat = ({
   const { supabase } = useSupabase()
   const [isTyping, setIsTyping] = useState(false)
   const [showLinkToForm, setShowLinkToForm] = useState(false)
+  const [fetched, setFetched] = useState(false)
 
   useEffect(() => {
     setTimeout(() => {
@@ -65,9 +67,17 @@ export const Chat = ({
     name: string
   ) => {
     setIsTyping(true)
+    setFetched(true)
     await requestCommentAboutSentiment(sentiment, name)
     setIsTyping(false)
+    setFetched(false)
   }
+
+  const debounceSentimentComment = debounce(async (sentiment, nickname) => {
+    if (!fetched) {
+      await fetchSentimentComment(sentiment, nickname)
+    }
+  }, 1000)
 
   useEffect(() => {
     if (
@@ -76,7 +86,7 @@ export const Chat = ({
       !isTyping &&
       !conversation.messages.slice(-3).every(value => !value.participant)
     ) {
-      fetchSentimentComment(conversation.sentiment, conversation.nickname)
+      debounceSentimentComment(conversation.sentiment, conversation.nickname)
     }
   }, [conversation.sentiment])
 
@@ -167,17 +177,6 @@ export const Chat = ({
             placeholder="Write your message!"
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
           />
-          {conversation.studyType !== 'INIBOT' && (
-            <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
-              {conversation.sentiment === 'happy' && <Smile />}
-              {conversation.sentiment === 'sad' && <Sad />}
-              {conversation.sentiment === 'angry' && <Angry />}
-              {conversation.sentiment === 'fearful' && <Fearful />}
-              {conversation.sentiment === 'disgusted' && <Disgusted />}
-              {conversation.sentiment === 'neutral' && <Neutral />}
-              {conversation.sentiment === 'surprised' && <Surprised />}
-            </span>
-          )}
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-purple-500 hover:bg-purple-400 focus:outline-none"
@@ -185,6 +184,20 @@ export const Chat = ({
             <span className="font-bold">Send</span>
             <PaperAirplane />
           </button>
+          {conversation.studyType !== 'INIBOT' && (
+            <div className="flex flex-col justify-center items-center px-2 ">
+              <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
+                {conversation.sentiment === 'happy' && <Smile />}
+                {conversation.sentiment === 'sad' && <Sad />}
+                {conversation.sentiment === 'angry' && <Angry />}
+                {conversation.sentiment === 'fearful' && <Fearful />}
+                {conversation.sentiment === 'disgusted' && <Disgusted />}
+                {/* {conversation.sentiment === 'neutral' && <Neutral />} */}
+                {conversation.sentiment === 'surprised' && <Surprised />}
+              </span>
+              <span className="text-xs">Emotion</span>
+            </div>
+          )}
           {/* </div> */}
         </form>
       </div>

@@ -56,13 +56,11 @@ export const StartForm = ({
     e.preventDefault()
     const nickname = e.target['nickname'].value
     updateConversation({ nickname })
-
     // add conversation info to db
     await supabase.from('conversation').upsert({
       conversation_id: conversation.id,
       study_type: conversation.studyType,
     })
-
     setPageState('Chat')
   }
 

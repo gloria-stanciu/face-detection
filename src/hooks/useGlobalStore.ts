@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { DetectionModel, FacesToDetect, Models, SentimentType } from '../types'
 
-interface Message {
+export interface Message {
   participant: boolean
   timestamp: number
   content: string
@@ -86,7 +86,7 @@ export const useGlobalStore = create(
     })),
     {
       name: 'vorbee', // unique name
-      // storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
     }
   )
 )

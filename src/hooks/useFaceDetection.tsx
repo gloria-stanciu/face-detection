@@ -1,5 +1,6 @@
 import {
   loadFaceExpressionModel,
+  loadFaceLandmarkModel,
   nets,
   TinyFaceDetectorOptions,
   draw,
@@ -43,6 +44,7 @@ export const useFaceDetection = (
   >()
   // set on mount
   useEffect(() => {
+    loadLandmarkModel()
     loadFaceDetectionModel()
     loadAgeAndGenderModel()
     loadExpressionModel()
@@ -50,6 +52,15 @@ export const useFaceDetection = (
   }, [])
 
   // action functions
+
+  const loadLandmarkModel = async () => {
+    try {
+      console.log('Load landmark model.')
+      await loadFaceLandmarkModel('/weights')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const loadFaceDetectionModel = () => {
     console.log('Load face detection model.')
@@ -137,11 +148,11 @@ export const useFaceDetection = (
       ([sentiment, value]) => {
         return {
           sentiment,
-          value: value - threshold[sentiment as keyof typeof threshold],
+          value: value,
+          //  - threshold[sentiment as keyof typeof threshold],
         }
       }
     )
-
     sentimentsValue.sort((a, b) => b.value - a.value)
 
     if (
@@ -182,6 +193,7 @@ export const useFaceDetection = (
       if (!video.current) return
 
       const detection = detectSingleFace(video.current, detectionOptions)
+        .withFaceLandmarks()
         .withFaceExpressions()
         .withAgeAndGender()
 

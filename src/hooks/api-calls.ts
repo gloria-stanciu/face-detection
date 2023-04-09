@@ -1,9 +1,17 @@
 import { OpenAIResponse, SentimentType } from '../types'
-import { useGlobalStore } from './useGlobalStore'
+import { Message, useGlobalStore } from './useGlobalStore'
 import { useSupabase } from '../hooks'
+import GPT3Tokenizer from 'gpt3-tokenizer'
 
-const convertToPrompMessages = () => {
-  const messages = useGlobalStore.getState().conversation.messages
+const convertToPrompMessages = (numberOfMessages: number | null = null) => {
+  let messages = [] as Message[]
+  if (numberOfMessages) {
+    messages = useGlobalStore
+      .getState()
+      .conversation.messages.slice(numberOfMessages)
+  } else {
+    messages = useGlobalStore.getState().conversation.messages
+  }
   return messages.reduce((promptString, message) => {
     const messageToConcat = message.participant
       ? `\nHuman: ${message.content}`
@@ -66,7 +74,6 @@ export const requestCommentAboutSentiment = async (
     }
   )
   const response: OpenAIResponse = await res.json()
-  // console.log({ response })
 
   useGlobalStore.getState().addMessage({
     content: response.choices[0].text,
@@ -83,10 +90,19 @@ export const requestCommentAboutSentiment = async (
 }
 
 export const fetchResponse = async () => {
-  const { supabase } = useSupabase()
-  const messagesToAdd = convertToPrompMessages()
+  const tokenizer = new GPT3Tokenizer({ type: 'gpt3' }) // or 'codex'
 
-  const prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+  const { supabase } = useSupabase()
+
+  let messagesToAdd = convertToPrompMessages()
+  let prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+
+  const encodedPrompt = tokenizer.encode(prompt)
+
+  if (encodedPrompt.bpe.length + 151 > 4097) {
+    messagesToAdd = convertToPrompMessages(-20)
+    prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+  }
 
   const res = await fetch(
     'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
@@ -110,7 +126,6 @@ export const fetchResponse = async () => {
     }
   )
   const response: OpenAIResponse = await res.json()
-  // console.log({ response })
 
   useGlobalStore.getState().addMessage({
     content: response.choices[0].text,
