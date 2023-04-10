@@ -79,11 +79,55 @@ export const StartForm = ({
       )}
       {!error && (
         <div className="w-full h-auto flex items-center justify-center">
-          <div className="bg-white py-6 px-10 md:max-w-full border border-gray-300 shadow-md rounded-xl z-30">
+          <div className="bg-white py-6 px-10 md:max-w-4xl border border-gray-300 shadow-md rounded-xl z-30">
             <div className="sm:text-3xl text-2xl font-semibold text-center text-purple-500  mb-6">
               Case study
             </div>
-            <div className="py-4 px-4 mb-6 text-gray-700 bg-gray-100 rounded-xl">
+            <div className="bg-gray-100 rounded-xl p-4 mb-6 flex flex-col gap-4">
+              <p>
+                <span className="font-sans font-bold text-red-500 text-lg pr-2">
+                  i
+                </span>
+                <b>Info</b>
+              </p>
+              <p>
+                Vorbee is a chatbot instructed to talk with you about your
+                hobbies.
+              </p>
+              {conversation.studyType === 'INIBOT' && (
+                <p>
+                  In the background, Vorbee will analyze your face expression.
+                </p>
+              )}
+              {conversation.studyType === 'SUBEMO' && (
+                <>
+                  <p>
+                    In the background, Vorbee will analyze your face expression
+                    and display its interpretation through emojis (happy, sad,
+                    anger, fearful, surprised, disgusted).
+                  </p>
+                  <p>No emoji displayed means a neutral face.</p>
+                </>
+              )}
+              {conversation.studyType === 'EMOCOM' && (
+                <>
+                  <p>
+                    In the background, Vorbee will analyze your face expression
+                    and display its interpretation through emojis (happy, sad,
+                    anger, fearful, surprised, disgusted).
+                  </p>
+                  <p>
+                    Throughout the conversation, Vorbee will also make comments
+                    about your emotion.
+                  </p>
+                  <p>No emoji displayed means a neutral face.</p>
+                </>
+              )}
+              <p className="font-semibold">
+                NO video recordings or images with your face will be collected.
+              </p>
+            </div>
+            <div className="py-4 px-4 mb-6 bg-gray-100 rounded-xl">
               <p>
                 ❗<b>Before starting</b>
               </p>
