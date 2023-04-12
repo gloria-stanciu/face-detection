@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useRef, useState } from 'react'
 import { useSupabase } from '../hooks'
 import { useGlobalStore } from '../hooks/useGlobalStore'
 import { LikertScaleQuestion } from './LikertScaleQuestion'
+import { OpenEndedQuestion } from './OpenEndedQuestion'
 
 const engagementStatements: { message: string; id: string }[] = [
   {
@@ -145,6 +146,21 @@ const describingTerms: string[] = [
   'Joyful',
 ]
 
+const openEndedQuestions: { text: string; id: string }[] = [
+  {
+    text: 'How will a more empathic chatbot affect the conversations you would have with it? Feel free to share both positive and negative viewpoints.',
+    id: 'open-ended-question-1',
+  },
+  {
+    text: 'How does a chatbot that detects and responds to your emotions affect your perception of it?',
+    id: 'open-ended-question-2',
+  },
+  {
+    text: 'How does a chatbot that detects and responds to your emotions affect the topics you are willing to discuss with it?',
+    id: 'open-ended-question-3',
+  },
+]
+
 export const Questionnaire = ({
   setPageState,
 }: {
@@ -168,6 +184,9 @@ export const Questionnaire = ({
       | string
       | string[]
 
+    openEndedQuestions.forEach(question => {
+      formAnswers[question.id] = form.get(question.id) as string | string[]
+    })
     await supabase
       .from('questionnaire')
       .insert({ conversation_id: conversation.id, responses: formAnswers })
@@ -227,7 +246,7 @@ export const Questionnaire = ({
                   <label
                     htmlFor={term}
                     className={`pr-2 text-gray-500 text-sm md:text-base text-center ${
-                      countTerms.includes(term) ? 'text-white' : ''
+                      countTerms.includes(term) ? '!text-white' : ''
                     } `}
                   >
                     {term}
@@ -250,6 +269,13 @@ export const Questionnaire = ({
               ))}
             </div>
           </div>
+          {openEndedQuestions.map(question => (
+            <OpenEndedQuestion
+              key={question.id}
+              question={question.text}
+              id={question.id}
+            />
+          ))}
           <button
             type="submit"
             className=" rounded-lg px-1 py-3 sm:w-56 bg-purple-500 text-white text-md font-semibold my-4"

@@ -12,7 +12,7 @@ import {
   detectSingleFace,
   matchDimensions,
 } from 'face-api.js'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Prediction, Sentiments, SentimentType } from '../types'
 import { useGlobalStore } from './useGlobalStore'
 import { useSupabase } from './index'
@@ -23,8 +23,8 @@ const threshold: Sentiments = {
   disgusted: 0.5,
   fearful: 0.5,
   happy: 0.95,
-  neutral: 0.9,
-  sad: 0.4,
+  neutral: 0.95,
+  sad: 0,
   surprised: 0.8,
 } as const
 
@@ -143,17 +143,16 @@ export const useFaceDetection = (
   }
 
   const storePredominantSentiment = (sentiments: Sentiments) => {
-    // console.log(sentiments)
     const sentimentsValue = Object.entries(sentiments).map(
       ([sentiment, value]) => {
         return {
           sentiment,
-          value: value,
-          //  - threshold[sentiment as keyof typeof threshold],
+          value: value - threshold[sentiment as keyof typeof threshold],
         }
       }
     )
     sentimentsValue.sort((a, b) => b.value - a.value)
+    console.log(sentimentsValue)
 
     if (
       useGlobalStore.getState().conversation.sentiment !==

@@ -43,10 +43,10 @@ export const requestCommentAboutSentiment = async (
       prompt = `Make a comment to ${name} about noticing that ${name} is ${sentiment}!`
       break
     case 'sad':
-      prompt = `${name} is sad. Send a message to cheer ${name} up!`
+      prompt = `${name} is feeling sad. Send a message to cheer ${name} up!`
       break
     case 'surprised':
-      prompt = `${name} is surprised. Explain the topic ${name}!`
+      prompt = `${name} is feeling a little surprised. Ask why.`
       break
     default:
       break
@@ -170,4 +170,46 @@ export const fetchSentiment = async (message: string) => {
   } catch (err) {
     console.log(err)
   }
+}
+
+export const greetUser = async (name: string) => {
+  const { supabase } = useSupabase()
+
+  let prompt = `Vorbee is a virtual assistant that asks questions about hobbies. This is the start of the conversation. Greet ${name} `
+
+  const res = await fetch(
+    'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'text-davinci-003',
+        name: 'Functions',
+        prompt: prompt,
+        temperature: 0.5,
+        max_tokens: 60,
+        top_p: 1.0,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.0,
+        stop: 'You: ',
+      }),
+    }
+  )
+  const response: OpenAIResponse = await res.json()
+
+  useGlobalStore.getState().addMessage({
+    content: response.choices[0].text,
+    participant: false,
+    sentiment: '',
+    timestamp: Date.now(),
+  })
+
+  await supabase.from('message').insert({
+    content: response.choices[0].text,
+    conversation_id: useGlobalStore.getState().conversation.id,
+    participant: false,
+  })
 }

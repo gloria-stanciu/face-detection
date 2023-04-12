@@ -17,6 +17,7 @@ import { useGlobalStore } from '../hooks/useGlobalStore'
 import {
   fetchResponse,
   fetchSentiment,
+  greetUser,
   requestCommentAboutSentiment,
 } from '../hooks/api-calls'
 
@@ -40,8 +41,13 @@ export const Chat = ({
   const { supabase } = useSupabase()
   const [isTyping, setIsTyping] = useState(false)
   const [showLinkToForm, setShowLinkToForm] = useState(false)
+  const [emojiToShow, setEmojiToShow] = useState(null)
+  const [sentimentMessage, setSentimentMessage] = useState(false)
 
   useEffect(() => {
+    setIsTyping(true)
+    greetUser(conversation.nickname)
+    setIsTyping(false)
     setTimeout(() => {
       setShowLinkToForm(true)
       addMessage({
@@ -52,6 +58,11 @@ export const Chat = ({
         timestamp: Date.now(),
       })
     }, 2 * 60 * 1000)
+
+    setTimeout(() => {
+      setSentimentMessage(true)
+      fetchSentimentComment(conversation.sentiment, conversation.nickname)
+    }, 20 * 1000)
   }, [])
 
   useEffect(() => {
@@ -73,15 +84,23 @@ export const Chat = ({
   const debounceSentimentComment = useRef(
     debounce(async (sentiment, nickname) => {
       await fetchSentimentComment(sentiment, nickname)
-    }, 500)
+    }, 1000)
+  ).current
+
+  const debounceSentimentUpdate = useRef(
+    debounce(sentiment => {
+      setEmojiToShow(sentiment)
+    }, 300)
   ).current
 
   useEffect(() => {
+    debounceSentimentUpdate(conversation.sentiment)
     if (
       conversation.studyType === 'EMOCOM' &&
-      !conversation.messages[conversation.messages?.length - 1]?.participant &&
+      // !conversation.messages[conversation.messages?.length - 1]?.participant &&
       !isTyping &&
-      !conversation.messages.slice(-3).every(value => !value.participant)
+      !conversation.messages.slice(-2).every(value => !value.participant) &&
+      sentimentMessage
     ) {
       debounceSentimentComment(conversation.sentiment, conversation.nickname)
     }
@@ -184,13 +203,13 @@ export const Chat = ({
           {conversation.studyType !== 'INIBOT' && (
             <div className="flex flex-col justify-center items-center px-2 ">
               <span className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 focus:outline-none">
-                {conversation.sentiment === 'happy' && <Smile />}
-                {conversation.sentiment === 'sad' && <Sad />}
-                {conversation.sentiment === 'angry' && <Angry />}
-                {conversation.sentiment === 'fearful' && <Fearful />}
-                {conversation.sentiment === 'disgusted' && <Disgusted />}
+                {emojiToShow === 'happy' && <Smile />}
+                {emojiToShow === 'sad' && <Sad />}
+                {emojiToShow === 'angry' && <Angry />}
+                {emojiToShow === 'fearful' && <Fearful />}
+                {emojiToShow === 'disgusted' && <Disgusted />}
                 {/* {conversation.sentiment === 'neutral' && <Neutral />} */}
-                {conversation.sentiment === 'surprised' && <Surprised />}
+                {emojiToShow === 'surprised' && <Surprised />}
               </span>
               <span className="text-xs">Emotion</span>
             </div>
