@@ -96,7 +96,9 @@ export const StartForm = ({
               </p>
               {conversation.studyType === 'INIBOT' && (
                 <p>
-                  In the background, Vorbee will analyze your face expression.
+                  In the background, Vorbee will analyze your face expression
+                  without you noticing it. All you need to do is have a
+                  conversation about your hobbies.
                 </p>
               )}
               {conversation.studyType === 'SUBEMO' && (
@@ -138,7 +140,8 @@ export const StartForm = ({
                   provide good framing
                 </li>
                 <li className="my-1">
-                  Make sure that your face is framed correctly
+                  Make sure that your face is framed correctly at all times
+                  during the video. Do not change your or the camera's position.
                 </li>
                 <li className="my-1">
                   Make sure the lighting does not affect the visibility and
