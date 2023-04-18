@@ -148,15 +148,15 @@ const describingTerms: string[] = [
 
 const openEndedQuestions: { text: string; id: string }[] = [
   {
-    text: 'How will a more empathic chatbot affect the conversations you would have with it? Feel free to share both positive and negative viewpoints.',
+    text: `How does a chatbot's ability to detect your emotions affect the conversations you have with it?`,
     id: 'open-ended-question-1',
   },
   {
-    text: 'How does a chatbot that detects and responds to your emotions affect your perception of it?',
+    text: `How does a chatbot's ability to detect your emotions affect your perception of the bot?`,
     id: 'open-ended-question-2',
   },
   {
-    text: 'How does a chatbot that detects and responds to your emotions affect the topics you are willing to discuss with it?',
+    text: ` How does a chatbot's ability to detect your emotions affect the topics you are willing to discuss with it?`,
     id: 'open-ended-question-3',
   },
 ]
