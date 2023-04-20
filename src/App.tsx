@@ -17,13 +17,13 @@ function App() {
       }
       setStartCamera(true)
     }
-    if (['Questionnaire', 'Finished'].includes(pageState)) {
-      const cameraContainer = document.getElementById('camera-container')
-      if (cameraContainer) {
-        cameraContainer.hidden = true
-      }
-      setStartCamera(false)
-    }
+    // if (['Questionnaire', 'Finished'].includes(pageState)) {
+    //   const cameraContainer = document.getElementById('camera-container')
+    //   if (cameraContainer) {
+    //     cameraContainer.hidden = true
+    //   }
+    //   setStartCamera(false)
+    // }
   }, [pageState])
 
   return (
@@ -44,7 +44,7 @@ function App() {
             <Chat setPageState={setPageState} />
           </div>
         )}
-        {pageState === 'Questionnaire' && (
+        {/* {pageState === 'Questionnaire' && (
           <div className="flex z-10 my-8 h-full items-center justify-center flex-col md:max-w-7xl">
             <Questionnaire setPageState={setPageState} />
           </div>
@@ -53,7 +53,7 @@ function App() {
           <div className="flex z-10 my-8 h-full items-center justify-center flex-col md:max-w-7xl">
             <Finished />
           </div>
-        )}
+        )} */}
       </div>
     </>
   )

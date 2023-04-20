@@ -52,7 +52,7 @@ export const Chat = ({
       setShowLinkToForm(true)
       addMessage({
         content:
-          'Thank you, you may continue chatting with me. Whenever you are ready, use the link on the screen to complete the questionnaire, conclude the session and the study.',
+          'Thank you, you may continue chatting with me. Whenever you are ready, use the link that just appeared in the header of the chatbot to complete the questionnaire, conclude the session and the study.',
         participant: false,
         sentiment: '',
         timestamp: Date.now(),
@@ -159,12 +159,12 @@ export const Chat = ({
           </div>
           {showLinkToForm && (
             <div className="flex justify-end flex-1">
-              <button
+              <a
                 className="hover:bg-purple-500 hover:text-white py-2 px-4 rounded-md text-purple-500"
-                onClick={() => setPageState('Questionnaire')}
+                href={`https://docs.google.com/forms/d/e/1FAIpQLSdMEwJU7dI-2NhL5lb0mg0RyyGoJ_1ukr_VpMS8vanU2eYRXQ/viewform?usp=pp_url&entry.417764107=${conversation.id}`}
               >
                 Go to <span className="font-bold">Questionnaire</span>
-              </button>
+              </a>
             </div>
           )}
         </div>
