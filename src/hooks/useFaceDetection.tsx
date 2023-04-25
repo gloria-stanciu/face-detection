@@ -24,7 +24,7 @@ const threshold: Sentiments = {
   fearful: 0.5,
   happy: 0.95,
   neutral: 0.95,
-  sad: 0,
+  sad: 0.25,
   surprised: 0.8,
 } as const
 

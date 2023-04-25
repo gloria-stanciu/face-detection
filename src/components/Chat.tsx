@@ -28,6 +28,8 @@ import { debounce } from 'lodash'
 import { TypingDots } from './TypingDots'
 import { SentimentType } from '../types'
 
+let timePassed = Date.now()
+
 export const Chat = ({
   setPageState,
 }: {
@@ -59,10 +61,11 @@ export const Chat = ({
       })
     }, 2 * 60 * 1000)
 
-    setTimeout(() => {
-      setSentimentMessage(true)
-      fetchSentimentComment(conversation.sentiment, conversation.nickname)
-    }, 20 * 1000)
+    // setTimeout(() => {
+    //   setSentimentMessage(true)
+    //   fetchSentimentComment(conversation.sentiment, conversation.nickname)
+    // }, 20 * 1000)
+    // setSentimentMessage(true)
   }, [])
 
   useEffect(() => {
@@ -77,6 +80,7 @@ export const Chat = ({
     name: string
   ) => {
     setIsTyping(true)
+    timePassed = Date.now()
     await requestCommentAboutSentiment(sentiment, name)
     setIsTyping(false)
   }
@@ -99,8 +103,9 @@ export const Chat = ({
       conversation.studyType === 'EMOCOM' &&
       // !conversation.messages[conversation.messages?.length - 1]?.participant &&
       !isTyping &&
-      !conversation.messages.slice(-2).every(value => !value.participant) &&
-      sentimentMessage
+      Date.now() - timePassed > 30 * 1000
+      // !conversation.messages.slice(-2).every(value => !value.participant) &&
+      // sentimentMessage
     ) {
       debounceSentimentComment(conversation.sentiment, conversation.nickname)
     }

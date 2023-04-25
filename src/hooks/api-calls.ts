@@ -31,22 +31,22 @@ export const requestCommentAboutSentiment = async (
   let prompt
   switch (sentiment) {
     case 'angry':
-      prompt = `${name} is angry. Send a message to calm ${name} down!`
+      prompt = `${name} is feeling angry. Show support and ask about their feelings.`
       break
     case 'disgusted':
-      prompt = `${name} is disgusted. Send a message to make ${name} feel better!`
+      prompt = `${name} is disgusted. Ask why are they feeling this way and offer solutions.`
       break
     case 'fearful':
-      prompt = `${name} is afraid. Send a message to comfort ${name}!`
+      prompt = `${name} is afraid. Comfort them and suggest what they can do to feel better.`
       break
     case 'happy':
-      prompt = `Make a comment to ${name} about noticing that ${name} is ${sentiment}!`
+      prompt = `${name} seems to be smiling. Make a comment to ${name} about noticing this.`
       break
     case 'sad':
-      prompt = `${name} is feeling sad. Send a message to cheer ${name} up!`
+      prompt = `${name} seems to be feeling a little sad. Encourage ${name} and say something to make ${name} smile!`
       break
     case 'surprised':
-      prompt = `${name} is feeling a little surprised. Ask why.`
+      prompt = `${name} is surprised. Mention seeing this and try to find out what they are surprised about.`
       break
     default:
       break
@@ -175,7 +175,7 @@ export const fetchSentiment = async (message: string) => {
 export const greetUser = async (name: string) => {
   const { supabase } = useSupabase()
 
-  let prompt = `Vorbee is a virtual assistant that asks questions about hobbies. This is the start of the conversation. Greet ${name} `
+  let prompt = `Vorbee is a chatbot that engages in conversations with people with chronic pain. This is the start of the conversation. Greet ${name} and start a conversation about their problems. `
 
   const res = await fetch(
     'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
