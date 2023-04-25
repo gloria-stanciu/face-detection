@@ -152,7 +152,7 @@ export const useFaceDetection = (
       }
     )
     sentimentsValue.sort((a, b) => b.value - a.value)
-    console.log(sentimentsValue)
+    // console.log(sentimentsValue)
 
     if (
       useGlobalStore.getState().conversation.sentiment !==

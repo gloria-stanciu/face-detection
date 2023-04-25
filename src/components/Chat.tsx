@@ -16,7 +16,7 @@ import BotAvatar from '../assets/bot-avatar.svg'
 import { useGlobalStore } from '../hooks/useGlobalStore'
 import {
   fetchResponse,
-  fetchSentiment,
+  // fetchSentiment,
   greetUser,
   requestCommentAboutSentiment,
 } from '../hooks/api-calls'
@@ -126,14 +126,14 @@ export const Chat = ({
     })
 
     // fetch sentiment of message
-    const sentiment = await fetchSentiment(message)
+    // const sentiment = await fetchSentiment(message)
 
     // add message to db
     await supabase.from('message').insert({
       content: message,
       conversation_id: conversation.id,
       participant: true,
-      sentiment,
+      // sentiment,
     })
 
     await fetchResponse()

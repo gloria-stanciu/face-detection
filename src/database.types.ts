@@ -11,24 +11,18 @@ export interface Database {
     Tables: {
       conversation: {
         Row: {
-          age: number | null
           conversation_id: string
           created_at: string | null
-          gender: string | null
           study_type: string | null
         }
         Insert: {
-          age?: number | null
           conversation_id: string
           created_at?: string | null
-          gender?: string | null
           study_type?: string | null
         }
         Update: {
-          age?: number | null
           conversation_id?: string
           created_at?: string | null
-          gender?: string | null
           study_type?: string | null
         }
       }
@@ -38,7 +32,6 @@ export interface Database {
           conversation_id: string | null
           id: number
           participant: boolean | null
-          sentiment: string | null
           timestamp: string | null
         }
         Insert: {
@@ -46,7 +39,6 @@ export interface Database {
           conversation_id?: string | null
           id?: number
           participant?: boolean | null
-          sentiment?: string | null
           timestamp?: string | null
         }
         Update: {
@@ -54,25 +46,7 @@ export interface Database {
           conversation_id?: string | null
           id?: number
           participant?: boolean | null
-          sentiment?: string | null
           timestamp?: string | null
-        }
-      }
-      questionnaire: {
-        Row: {
-          conversation_id: string | null
-          id: number
-          responses: Json | null
-        }
-        Insert: {
-          conversation_id?: string | null
-          id?: number
-          responses?: Json | null
-        }
-        Update: {
-          conversation_id?: string | null
-          id?: number
-          responses?: Json | null
         }
       }
       recording: {

@@ -3,6 +3,9 @@ import { Message, useGlobalStore } from './useGlobalStore'
 import { useSupabase } from '../hooks'
 import GPT3Tokenizer from 'gpt3-tokenizer'
 
+const promptToUse =
+  'Vorbee is a chatbot that engages in conversations with people with chronic pain. Start a conversation about their problems.'
+
 const convertToPrompMessages = (numberOfMessages: number | null = null) => {
   let messages = [] as Message[]
   if (numberOfMessages) {
@@ -95,13 +98,13 @@ export const fetchResponse = async () => {
   const { supabase } = useSupabase()
 
   let messagesToAdd = convertToPrompMessages()
-  let prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+  let prompt = `${promptToUse} ${messagesToAdd} \n You: `
 
   const encodedPrompt = tokenizer.encode(prompt)
 
   if (encodedPrompt.bpe.length + 151 > 4097) {
     messagesToAdd = convertToPrompMessages(-20)
-    prompt = `Vorbee is a virtual assistant that asks questions about hobbies. ${messagesToAdd} \n You: `
+    prompt = `${promptToUse} ${messagesToAdd} \n You: `
   }
 
   const res = await fetch(
@@ -141,41 +144,41 @@ export const fetchResponse = async () => {
   })
 }
 
-export const fetchSentiment = async (message: string) => {
-  try {
-    const res = await fetch(
-      'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'text-davinci-003',
-          name: 'Functions',
-          prompt: `Decide whether a message's sentiment is happy, sad, amused, angry or neutral,. \n Message: ${message} \n`,
-          temperature: 0,
-          max_tokens: 60,
-          top_p: 1,
-          frequency_penalty: 0.5,
-          presence_penalty: 0,
-          stop: '\n',
-        }),
-      }
-    )
+// export const fetchSentiment = async (message: string) => {
+//   try {
+//     const res = await fetch(
+//       'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
+//       {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+//         },
+//         body: JSON.stringify({
+//           model: 'text-davinci-003',
+//           name: 'Functions',
+//           prompt: `Decide whether a message's sentiment is happy, sad, amused, angry or neutral,. \n Message: ${message} \n`,
+//           temperature: 0,
+//           max_tokens: 60,
+//           top_p: 1,
+//           frequency_penalty: 0.5,
+//           presence_penalty: 0,
+//           stop: '\n',
+//         }),
+//       }
+//     )
 
-    const response: OpenAIResponse = await res.json()
-    return response.choices[0].text.replace('\n', '')
-  } catch (err) {
-    console.log(err)
-  }
-}
+//     const response: OpenAIResponse = await res.json()
+//     return response.choices[0].text.replace('\n', '')
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
 
 export const greetUser = async (name: string) => {
   const { supabase } = useSupabase()
 
-  let prompt = `Vorbee is a chatbot that engages in conversations with people with chronic pain. This is the start of the conversation. Greet ${name} and start a conversation about their problems. `
+  let prompt = `${promptToUse} This is the start of the conversation. Vorbee needs to greet ${name}. `
 
   const res = await fetch(
     'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
