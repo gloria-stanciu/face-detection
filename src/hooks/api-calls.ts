@@ -4,7 +4,7 @@ import { useSupabase } from '../hooks'
 import GPT3Tokenizer from 'gpt3-tokenizer'
 
 const promptToUse =
-  'Vorbee is a chatbot that engages in conversations with people with chronic pain. Start a conversation about their problems.'
+  'Vorbee is a chatbot that engages in conversations with people with chronic pain. Start a conversation about their chronic pain.'
 
 const convertToPrompMessages = (numberOfMessages: number | null = null) => {
   let messages = [] as Message[]
@@ -178,7 +178,7 @@ export const fetchResponse = async () => {
 export const greetUser = async (name: string) => {
   const { supabase } = useSupabase()
 
-  let prompt = `${promptToUse} This is the start of the conversation. Vorbee needs to greet ${name}. `
+  let prompt = `${promptToUse} This is the start of the conversation. Vorbee needs to also greet ${name}. `
 
   const res = await fetch(
     'https://bibmytmkipilvlznixwo.functions.supabase.co/create-completion-open-ai',
