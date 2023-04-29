@@ -261,7 +261,6 @@ export const useFaceDetection = (
       } else {
         clearCanvas()
       }
-
       if (isCameraOn) {
         animationFrame = requestAnimationFrame(
           async () => await detect(detectionOptions)

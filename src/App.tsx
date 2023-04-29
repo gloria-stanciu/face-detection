@@ -13,7 +13,7 @@ function App() {
     if (pageState === 'Chat') {
       const cameraContainer = document.getElementById('camera-container')
       if (cameraContainer) {
-        cameraContainer.hidden = true
+        cameraContainer.style.opacity = '0'
       }
       setStartCamera(true)
     }
