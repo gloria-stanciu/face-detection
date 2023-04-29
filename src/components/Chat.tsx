@@ -28,8 +28,6 @@ import { debounce } from 'lodash'
 import { TypingDots } from './TypingDots'
 import { SentimentType } from '../types'
 
-let timePassed = Date.now()
-
 export const Chat = ({
   setPageState,
 }: {
@@ -45,6 +43,9 @@ export const Chat = ({
   const [showLinkToForm, setShowLinkToForm] = useState(false)
   const [emojiToShow, setEmojiToShow] = useState(null)
   const [sentimentMessage, setSentimentMessage] = useState(false)
+  const pastEmotion = useRef<SentimentType | null>('neutral')
+  const pastShownEmoji = useRef<SentimentType | null>(null)
+  const timePassed = useRef(Date.now())
 
   useEffect(() => {
     setIsTyping(true)
@@ -75,12 +76,26 @@ export const Chat = ({
     }
   }, [conversation.messages, isTyping])
 
+  useEffect(() => {
+    if (!isTyping) {
+      if (emojiToShow !== pastShownEmoji.current) {
+        console.log({
+          pastShownEmoji: pastShownEmoji.current,
+          emojiToShow,
+        })
+        debounceSentimentComment(conversation.sentiment, conversation.nickname)
+      }
+    }
+  }, [isTyping])
+
   const fetchSentimentComment = async (
     sentiment: SentimentType,
     name: string
   ) => {
     setIsTyping(true)
-    timePassed = Date.now()
+    if (sentiment !== 'neutral') {
+      timePassed.current = Date.now()
+    }
     await requestCommentAboutSentiment(sentiment, name)
     setIsTyping(false)
   }
@@ -93,6 +108,8 @@ export const Chat = ({
 
   const debounceSentimentUpdate = useRef(
     debounce(sentiment => {
+      pastEmotion.current = pastShownEmoji.current
+      pastShownEmoji.current = sentiment
       setEmojiToShow(sentiment)
     }, 300)
   ).current
@@ -103,7 +120,7 @@ export const Chat = ({
       conversation.studyType === 'EMOCOM' &&
       // !conversation.messages[conversation.messages?.length - 1]?.participant &&
       !isTyping &&
-      Date.now() - timePassed > 30 * 1000
+      Date.now() - timePassed.current > 15 * 1000
       // !conversation.messages.slice(-2).every(value => !value.participant) &&
       // sentimentMessage
     ) {
