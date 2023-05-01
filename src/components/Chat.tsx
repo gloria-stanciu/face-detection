@@ -182,10 +182,11 @@ export const Chat = ({
           {showLinkToForm && (
             <div className="flex justify-end flex-1">
               <a
-                className="hover:bg-purple-500 hover:text-white py-2 px-4 rounded-md text-purple-500"
+                className="hover:bg-purple-500 hover:text-white py-2 px-4 rounded-md text-purple-500 text-sm"
                 href={`https://docs.google.com/forms/d/e/1FAIpQLSdMEwJU7dI-2NhL5lb0mg0RyyGoJ_1ukr_VpMS8vanU2eYRXQ/viewform?usp=pp_url&entry.417764107=${conversation.id}`}
               >
-                Go to <span className="font-bold">Questionnaire</span>
+                End chatting and open the final
+                <span className="font-bold"> Questionnaire</span>
               </a>
             </div>
           )}

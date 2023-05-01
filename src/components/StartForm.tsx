@@ -90,41 +90,12 @@ export const StartForm = ({
                 </span>
                 <b>Info</b>
               </p>
+              <p>Vorbee is a smart chatbot.</p>
               <p>
-                Vorbee is a chatbot instructed to talk with you about your
-                hobbies.
+                In the background, Vorbee will analyze your face expression
+                without you noticing it. All you need to do is have a
+                conversation.
               </p>
-              {conversation.studyType === 'INIBOT' && (
-                <p>
-                  In the background, Vorbee will analyze your face expression
-                  without you noticing it. All you need to do is have a
-                  conversation about your hobbies.
-                </p>
-              )}
-              {conversation.studyType === 'SUBEMO' && (
-                <>
-                  <p>
-                    In the background, Vorbee will analyze your face expression
-                    and display its interpretation through emojis (happy, sad,
-                    anger, fearful, surprised, disgusted).
-                  </p>
-                  <p>No emoji displayed means a neutral face.</p>
-                </>
-              )}
-              {conversation.studyType === 'EMOCOM' && (
-                <>
-                  <p>
-                    In the background, Vorbee will analyze your face expression
-                    and display its interpretation through emojis (happy, sad,
-                    anger, fearful, surprised, disgusted).
-                  </p>
-                  <p>
-                    Throughout the conversation, Vorbee will also make comments
-                    about your emotion.
-                  </p>
-                  <p>No emoji displayed means a neutral face.</p>
-                </>
-              )}
               <p className="font-semibold">
                 NO video recordings or images with your face will be collected.
               </p>
